@@ -1,0 +1,576 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  X, 
+  Wallet, 
+  CreditCard, 
+  Smartphone, 
+  Banknote, 
+  MapPin, 
+  Phone, 
+  Clock, 
+  ShieldCheck, 
+  CheckCircle2, 
+  AlertCircle, 
+  ArrowRight, 
+  Sparkles, 
+  PlusCircle,
+  Lock,
+  ChevronRight
+} from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { useWallet } from '../context/WalletContext';
+import { useToast } from '../context/ToastContext';
+
+export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
+  const { items, subtotal, discount, deliveryFee, tax, tip, total, appliedPromo, deliveryAddress, setDeliveryAddress, deliveryType, clearCart } = useCart();
+  const { balance, deductCredit, setIsWalletModalOpen } = useWallet();
+  const { addToast } = useToast();
+
+  const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'card' | 'apple' | 'cash'
+  const [phoneNumber, setPhoneNumber] = useState('(555) 382-9901');
+  const [dropoffNotes, setDropoffNotes] = useState('Leave at front door & ring bell');
+  
+  // Card Details State for 3D Card Simulation
+  const [cardNumber, setCardNumber] = useState('4532 8920 1142 6790');
+  const [cardHolder, setCardHolder] = useState('STEPHEN KARIKARI');
+  const [cardExpiry, setCardExpiry] = useState('08/28');
+  const [cardCvv, setCardCvv] = useState('883');
+  const [isCardFlipped, setIsCardFlipped] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handlePlaceOrder = async () => {
+    if (items.length === 0) {
+      addToast('Your cart is empty', 'error');
+      return;
+    }
+
+    setIsProcessing(true);
+
+    // Simulate processing latency for realism
+    await new Promise((res) => setTimeout(res, 900));
+
+    const orderId = `ORD-${Date.now().toString().slice(-8)}`;
+
+    if (paymentMethod === 'wallet') {
+      const success = deductCredit(total, orderId);
+      if (!success) {
+        setIsProcessing(false);
+        return;
+      }
+    }
+
+    const orderDetails = {
+      orderId,
+      items: [...items],
+      subtotal,
+      discount,
+      deliveryFee,
+      tax,
+      tip,
+      total,
+      appliedPromo,
+      deliveryAddress,
+      deliveryType,
+      phoneNumber,
+      dropoffNotes,
+      paymentMethod: paymentMethod === 'wallet' ? 'Food Credit Wallet' : paymentMethod === 'card' ? 'Credit Card (••• 6790)' : paymentMethod === 'apple' ? 'Apple Pay' : 'Cash on Delivery',
+      placedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      estimatedArrival: deliveryType === 'priority' ? '15-20 mins' : '25-35 mins'
+    };
+
+    setIsProcessing(false);
+    clearCart();
+    onClose();
+    onOrderSuccess(orderDetails);
+  };
+
+  const remainingBalanceAfterOrder = +(balance - total).toFixed(2);
+  const hasEnoughCredit = balance >= total;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 bg-stone-950/85 backdrop-blur-md"
+        />
+
+        {/* Checkout Modal Window */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.94, y: 20 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 280 }}
+          className="relative w-full max-w-4xl bg-stone-900 border border-stone-800 rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[92vh] flex flex-col"
+        >
+          
+          {/* Top Bar */}
+          <div className="p-5 sm:p-6 border-b border-stone-800 bg-stone-950/70 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-stone-950">
+                <Lock className="w-5 h-5 stroke-[2.5]" />
+              </div>
+              <div>
+                <h2 className="font-display font-bold text-xl text-white">Express Checkout</h2>
+                <div className="flex items-center gap-2 text-xs text-stone-400">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>256-Bit Encrypted & Verified</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-stone-400 hover:text-white bg-stone-800/80 hover:bg-stone-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Body Columns */}
+          <div className="flex-1 overflow-y-auto p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Left Column: Delivery & Payment Options */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Delivery Address Section */}
+              <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase font-bold text-stone-400 tracking-wider flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> Delivery Address
+                  </span>
+                  <span className="text-[11px] text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">
+                    {deliveryType === 'priority' ? 'Priority Express (15-20 min)' : 'Standard (25-35 min)'}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    placeholder="Street Address, Apt / Suite"
+                    className="w-full px-3.5 py-2.5 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs sm:text-sm text-white placeholder-stone-500 focus:outline-none"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Contact Phone"
+                      className="w-full px-3.5 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder-stone-500 focus:outline-none"
+                    />
+                    <input
+                      type="text"
+                      value={dropoffNotes}
+                      onChange={(e) => setDropoffNotes(e.target.value)}
+                      placeholder="Dropoff instructions"
+                      className="w-full px-3.5 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder-stone-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Method Selector */}
+              <div className="space-y-3">
+                <span className="text-xs uppercase font-bold text-stone-400 tracking-wider">
+                  Select Payment Method
+                </span>
+
+                {/* Option 1: FOOD CREDIT WALLET (Recommended) */}
+                <div
+                  onClick={() => setPaymentMethod('wallet')}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
+                    paymentMethod === 'wallet'
+                      ? 'bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/5 border-amber-500 shadow-lg shadow-amber-500/10'
+                      : 'bg-stone-950/60 border-stone-800 hover:border-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                        paymentMethod === 'wallet' ? 'border-amber-400 bg-amber-400 text-stone-950' : 'border-stone-600'
+                      }`}>
+                        {paymentMethod === 'wallet' && <div className="w-2 h-2 rounded-full bg-stone-950" />}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                          <Wallet className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-white flex items-center gap-2">
+                            Food Credit Balance
+                            <span className="text-[10px] bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded font-black tracking-wide">
+                              FASTEST
+                            </span>
+                          </div>
+                          <div className="text-xs text-stone-400">
+                            Available Credit: <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <span className="font-mono text-sm font-extrabold text-amber-400">
+                      ${balance.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* Credit Status Banner when selected */}
+                  {paymentMethod === 'wallet' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-3 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs"
+                    >
+                      {hasEnoughCredit ? (
+                        <div className="flex items-center gap-2 text-emerald-300">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                          <span>
+                            Remaining balance after order: <strong className="font-mono">${remainingBalanceAfterOrder.toFixed(2)}</strong>
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between w-full text-rose-300">
+                          <div className="flex items-center gap-1.5">
+                            <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                            <span>Short by ${(total - balance).toFixed(2)}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsWalletModalOpen(true);
+                            }}
+                            className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-lg font-bold text-xs flex items-center gap-1 shadow"
+                          >
+                            <PlusCircle className="w-3.5 h-3.5" /> Top Up Credit
+                          </button>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Option 2: Credit / Debit Card (Interactive 3D Flipping Card) */}
+                <div
+                  onClick={() => setPaymentMethod('card')}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
+                    paymentMethod === 'card'
+                      ? 'bg-stone-950/90 border-amber-500 shadow-lg shadow-amber-500/10'
+                      : 'bg-stone-950/60 border-stone-800 hover:border-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                      paymentMethod === 'card' ? 'border-amber-400 bg-amber-400 text-stone-950' : 'border-stone-600'
+                    }`}>
+                      {paymentMethod === 'card' && <div className="w-2 h-2 rounded-full bg-stone-950" />}
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-1">
+                      <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                        <CreditCard className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-white">Credit / Debit Card</div>
+                        <div className="text-xs text-stone-400">Visa, Mastercard, Amex</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card Form & 3D Visual Card when selected */}
+                  {paymentMethod === 'card' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-4 space-y-4 pt-3 border-t border-stone-800"
+                    >
+                      {/* Stylized 3D Card Preview */}
+                      <div className="perspective-1000 flex justify-center my-2">
+                        <motion.div
+                          animate={{ rotateY: isCardFlipped ? 180 : 0 }}
+                          transition={{ duration: 0.6 }}
+                          className="relative w-full max-w-[320px] h-48 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden"
+                          style={{
+                            transformStyle: 'preserve-3d',
+                            background: 'linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #431407 100%)',
+                            border: '1px solid rgba(255, 255, 255, 0.15)'
+                          }}
+                        >
+                          {!isCardFlipped ? (
+                            // Front of Card
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="font-display text-xs tracking-widest text-amber-300 font-bold uppercase">
+                                  STEVE FOOD VIP
+                                </span>
+                                <span className="font-mono font-black italic text-base text-stone-200">
+                                  VISA
+                                </span>
+                              </div>
+
+                              <div className="w-9 h-7 rounded-md bg-gradient-to-tr from-amber-400 to-amber-200 shadow-inner flex items-center justify-center my-1">
+                                <div className="w-6 h-4 border border-amber-800/40 rounded-sm opacity-60" />
+                              </div>
+
+                              <div>
+                                <div className="font-mono text-sm tracking-widest text-stone-100 font-bold">
+                                  {cardNumber || '•••• •••• •••• ••••'}
+                                </div>
+                                <div className="flex justify-between items-end mt-2 text-[10px] text-stone-300">
+                                  <div>
+                                    <div className="text-[8px] uppercase tracking-wider text-stone-400">Cardholder</div>
+                                    <div className="font-semibold tracking-wide uppercase">{cardHolder || 'YOUR NAME'}</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-[8px] uppercase tracking-wider text-stone-400">Expires</div>
+                                    <div className="font-mono font-semibold">{cardExpiry || 'MM/YY'}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            // Back of Card
+                            <div style={{ transform: 'rotateY(180deg)' }} className="h-full flex flex-col justify-between">
+                              <div className="w-full h-8 bg-black/80 -mx-5 mt-2" />
+                              <div className="flex items-center justify-end gap-2 bg-stone-200 text-stone-900 px-3 py-1.5 rounded text-xs font-mono font-bold">
+                                <span>CVV:</span>
+                                <span>{cardCvv || '•••'}</span>
+                              </div>
+                              <div className="text-[9px] text-stone-400 text-center">
+                                Authorized Signature • 256-bit Secure
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      </div>
+
+                      {/* Inputs */}
+                      <div className="space-y-2.5 text-xs">
+                        <div>
+                          <label className="block text-stone-400 mb-1">Card Number</label>
+                          <input
+                            type="text"
+                            value={cardNumber}
+                            onChange={(e) => setCardNumber(e.target.value)}
+                            maxLength={19}
+                            className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white font-mono focus:border-amber-500 focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-stone-400 mb-1">Cardholder Name</label>
+                            <input
+                              type="text"
+                              value={cardHolder}
+                              onChange={(e) => setCardHolder(e.target.value.toUpperCase())}
+                              className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white focus:border-amber-500 focus:outline-none"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-stone-400 mb-1">Exp Date</label>
+                              <input
+                                type="text"
+                                value={cardExpiry}
+                                onChange={(e) => setCardExpiry(e.target.value)}
+                                placeholder="MM/YY"
+                                maxLength={5}
+                                className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white font-mono focus:border-amber-500 focus:outline-none text-center"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-stone-400 mb-1">CVV</label>
+                              <input
+                                type="password"
+                                value={cardCvv}
+                                onFocus={() => setIsCardFlipped(true)}
+                                onBlur={() => setIsCardFlipped(false)}
+                                onChange={(e) => setCardCvv(e.target.value)}
+                                maxLength={4}
+                                className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white font-mono focus:border-amber-500 focus:outline-none text-center"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Option 3: Apple Pay / Google Pay */}
+                <div
+                  onClick={() => setPaymentMethod('apple')}
+                  className={`p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-center justify-between ${
+                    paymentMethod === 'apple'
+                      ? 'bg-stone-950/90 border-amber-500'
+                      : 'bg-stone-950/60 border-stone-800 hover:border-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                      paymentMethod === 'apple' ? 'border-amber-400 bg-amber-400 text-stone-950' : 'border-stone-600'
+                    }`}>
+                      {paymentMethod === 'apple' && <div className="w-2 h-2 rounded-full bg-stone-950" />}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                        <Smartphone className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs sm:text-sm font-bold text-white">Apple Pay / Google Pay</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] text-stone-400">1-Touch Pay</span>
+                </div>
+
+                {/* Option 4: Cash on Delivery */}
+                <div
+                  onClick={() => setPaymentMethod('cash')}
+                  className={`p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-center justify-between ${
+                    paymentMethod === 'cash'
+                      ? 'bg-stone-950/90 border-amber-500'
+                      : 'bg-stone-950/60 border-stone-800 hover:border-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                      paymentMethod === 'cash' ? 'border-amber-400 bg-amber-400 text-stone-950' : 'border-stone-600'
+                    }`}>
+                      {paymentMethod === 'cash' && <div className="w-2 h-2 rounded-full bg-stone-950" />}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        <Banknote className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs sm:text-sm font-bold text-white">Cash on Delivery</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] text-stone-400">Pay Courier in Person</span>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Right Column: Order Summary & Placement */}
+            <div className="lg:col-span-5 flex flex-col justify-between bg-stone-950/70 p-5 rounded-2xl border border-stone-800 space-y-4">
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-stone-300 pb-3 border-b border-stone-800">
+                  Order Summary ({items.length} dishes)
+                </h3>
+
+                {/* Items Mini List */}
+                <div className="mt-3 space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                  {items.map((item) => (
+                    <div key={item.cartItemId} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 min-w-0 pr-2">
+                        <span className="w-5 h-5 rounded bg-stone-800 text-stone-300 font-mono font-bold flex items-center justify-center text-[10px]">
+                          {item.quantity}x
+                        </span>
+                        <span className="text-stone-200 truncate">{item.name}</span>
+                      </div>
+                      <span className="font-mono font-semibold text-stone-300 flex-shrink-0">
+                        ${item.totalItemPrice.toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pricing Summary */}
+                <div className="mt-4 pt-3 border-t border-stone-800 space-y-1.5 text-xs text-stone-400">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span className="font-mono text-stone-200">${subtotal.toFixed(2)}</span>
+                  </div>
+
+                  {discount > 0 && (
+                    <div className="flex justify-between text-emerald-400 font-medium">
+                      <span>Promo Discount ({appliedPromo?.code})</span>
+                      <span className="font-mono">-${discount.toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between">
+                    <span>Delivery</span>
+                    <span className="font-mono text-stone-200">{deliveryFee === 0 ? 'FREE' : `$${deliveryFee.toFixed(2)}`}</span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span>Tax (8.25%)</span>
+                    <span className="font-mono text-stone-200">${tax.toFixed(2)}</span>
+                  </div>
+
+                  {tip > 0 && (
+                    <div className="flex justify-between">
+                      <span>Driver Tip</span>
+                      <span className="font-mono text-stone-200">${tip.toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
+                    <span className="font-bold text-sm">Grand Total</span>
+                    <span className="font-mono font-black text-2xl text-amber-400">
+                      ${total.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Complete Order Button */}
+              <div className="space-y-2 pt-2">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={isProcessing || (paymentMethod === 'wallet' && !hasEnoughCredit)}
+                  onClick={handlePlaceOrder}
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 disabled:opacity-50 text-stone-950 font-black text-base shadow-xl shadow-orange-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  {isProcessing ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
+                      <span>Authorizing Payment...</span>
+                    </div>
+                  ) : paymentMethod === 'wallet' ? (
+                    hasEnoughCredit ? (
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-5 h-5" />
+                        <span>Pay with Food Credit • ${total.toFixed(2)}</span>
+                      </div>
+                    ) : (
+                      <span>Insufficient Credits</span>
+                    )
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      <span>Place Order • ${total.toFixed(2)}</span>
+                    </div>
+                  )}
+                </motion.button>
+
+                <p className="text-[10px] text-stone-500 text-center flex items-center justify-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                  Instant order confirmation & live tracking dispatched to kitchen
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
+
