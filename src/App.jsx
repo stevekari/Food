@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, UtensilsCrossed, Search, Flame, ArrowUp } from 'lucide-react';
 import { FOOD_ITEMS } from './data/foodData';
