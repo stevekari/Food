@@ -12,12 +12,20 @@ import {
   ChefHat,
   Clock,
   MapPin,
-  ChevronDown
+  ChevronDown,
+  Download
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWallet } from '../context/WalletContext';
 
-export default function Navbar({ searchQuery, setSearchQuery, onSelectCategory }) {
+export default function Navbar({ 
+  searchQuery, 
+  setSearchQuery, 
+  onSelectCategory,
+  onOpenInstallModal,
+  isInstallable,
+  isInstalled 
+}) {
   const { itemCount, openCart, total } = useCart();
   const { balance, setIsWalletModalOpen } = useWallet();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -91,9 +99,22 @@ export default function Navbar({ searchQuery, setSearchQuery, onSelectCategory }
             </div>
           </div>
 
-          {/* Right Action Controls: Credit Wallet & Cart Button */}
+          {/* Right Action Controls: Install App, Credit Wallet & Cart Button */}
           <div className="flex items-center gap-3">
             
+            {/* Install App Button (Desktop) */}
+            {isInstallable && !isInstalled && (
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={onOpenInstallModal}
+                className="hidden xl:flex items-center gap-2 px-3.5 py-2 rounded-full bg-stone-900 hover:bg-stone-800 border border-amber-500/40 hover:border-amber-400 text-amber-400 text-xs font-bold transition-all shadow-md group"
+              >
+                <Download className="w-3.5 h-3.5 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
+                <span>Install App</span>
+              </motion.button>
+            )}
+
             {/* Food Credit Balance Pill */}
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -183,6 +204,19 @@ export default function Navbar({ searchQuery, setSearchQuery, onSelectCategory }
                 </div>
                 <span className="text-emerald-400 font-semibold">20-30 min</span>
               </div>
+
+              {isInstallable && !isInstalled && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onOpenInstallModal();
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border border-amber-500/40 text-amber-300 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
+                >
+                  <Download className="w-4 h-4 text-amber-400" />
+                  <span>Install STEVE FOOD App</span>
+                </button>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

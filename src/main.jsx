@@ -9,3 +9,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 );
 
+// Register Progressive Web App Service Worker
+if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'test') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        console.log('STEVE FOOD PWA ServiceWorker registration successful with scope: ', registration.scope);
+      })
+      .catch((err) => {
+        console.warn('STEVE FOOD PWA ServiceWorker registration failed: ', err);
+      });
+  });
+}
+
+

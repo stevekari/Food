@@ -19,11 +19,30 @@ import OrderSuccessModal from './components/OrderSuccessModal';
 import CustomerReviews from './components/CustomerReviews';
 import Footer from './components/Footer';
 
+import { usePWA } from './hooks/usePWA';
+import InstallPwaModal from './components/InstallPwaModal';
+import PwaInstallBanner from './components/PwaInstallBanner';
+import OfflineToast from './components/OfflineToast';
+
 function MainApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDietary, setSelectedDietary] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
+
+  // PWA Hook
+  const {
+    isInstallable,
+    isNativeInstallable,
+    isInstalled,
+    isIOS,
+    isOnline,
+    isUpdateAvailable,
+    isInstallModalOpen,
+    setIsInstallModalOpen,
+    installApp,
+    updateApp
+  } = usePWA();
 
   // Modals state
   const [selectedFoodForModal, setSelectedFoodForModal] = useState(null);
@@ -94,6 +113,9 @@ function MainApp() {
           setSelectedCategory(catId);
           scrollToMenu();
         }}
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
+        isInstallable={isInstallable}
+        isInstalled={isInstalled}
       />
 
       {/* Hero Section */}
@@ -198,6 +220,29 @@ function MainApp() {
         order={placedOrder}
         isOpen={isOrderSuccessOpen}
         onClose={() => setIsOrderSuccessOpen(false)}
+      />
+
+      {/* PWA Floating Install Banner */}
+      <PwaInstallBanner
+        isInstallable={isInstallable}
+        isInstalled={isInstalled}
+        onOpenModal={() => setIsInstallModalOpen(true)}
+      />
+
+      {/* PWA Guided Install Modal */}
+      <InstallPwaModal
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+        onInstall={installApp}
+        isNativeInstallable={isNativeInstallable}
+        isIOS={isIOS}
+      />
+
+      {/* Offline Status & Update Notifications */}
+      <OfflineToast
+        isOnline={isOnline}
+        isUpdateAvailable={isUpdateAvailable}
+        onUpdateApp={updateApp}
       />
 
     </div>
