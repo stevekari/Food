@@ -21,9 +21,9 @@ export default function Hero({ onExploreClick }) {
   return (
     <section className="relative pt-24 pb-14 sm:pt-32 sm:pb-20 md:pt-40 md:pb-28 overflow-hidden">
       {/* Glow Ambient Blobs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-amber-600/20 via-orange-600/15 to-red-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-10 left-10 w-48 sm:w-72 h-48 sm:h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute bottom-10 right-10 w-48 sm:w-96 h-48 sm:h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-amber-600/20 via-orange-600/15 to-red-600/10 rounded-full blur-3xl pointer-events-none -z-10 gpu-layer" />
+      <div className="absolute top-10 left-10 w-48 sm:w-72 h-48 sm:h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10 gpu-layer" />
+      <div className="absolute bottom-10 right-10 w-48 sm:w-96 h-48 sm:h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none -z-10 gpu-layer" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">

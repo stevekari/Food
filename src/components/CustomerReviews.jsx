@@ -24,13 +24,9 @@ export default function CustomerReviews() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {REVIEWS.map((review, i) => (
-            <motion.div
+          {REVIEWS.map((review) => (
+            <div
               key={review.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
               className="p-6 rounded-3xl bg-stone-900/60 border border-stone-800 hover:border-amber-500/40 transition-all flex flex-col justify-between"
             >
               <div>
@@ -65,7 +61,7 @@ export default function CustomerReviews() {
                   {review.dish}
                 </span>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 

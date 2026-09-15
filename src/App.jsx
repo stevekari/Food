@@ -55,16 +55,49 @@ function MainApp() {
 
   const menuSectionRef = useRef(null);
   const dealsSectionRef = useRef(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    let ticking = false;
+    const checkScrollTop = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowScrollTop(window.scrollY > 400);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', checkScrollTop, { passive: true });
+    return () => window.removeEventListener('scroll', checkScrollTop);
+  }, []);
+
+  const smoothScrollTo = (target) => {
+    const el = typeof target === 'string' ? document.getElementById(target) : target;
+    if (!el) return;
+    const headerOffset = 76;
+    const elementPosition = el.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  };
 
   const scrollToMenu = () => {
-    menuSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    smoothScrollTo(menuSectionRef.current);
   };
 
   const scrollToDeals = () => {
-    const dealsEl = document.getElementById('deals');
-    if (dealsEl) {
-      dealsEl.scrollIntoView({ behavior: 'smooth' });
-    }
+    smoothScrollTo('deals');
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   // Filter & Sort Food Items
@@ -114,7 +147,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-black pb-20 md:pb-0">
+    <div className="min-h-screen bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-black pb-20 md:pb-0 overflow-x-clip">
       
       {/* Sticky Navigation Bar */}
       <Navbar
@@ -184,10 +217,7 @@ function MainApp() {
             </button>
           </div>
         ) : (
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <AnimatePresence>
               {filteredFoodItems.map((food) => (
                 <FoodCard
@@ -197,7 +227,7 @@ function MainApp() {
                 />
               ))}
             </AnimatePresence>
-          </motion.div>
+          </div>
         )}
 
       </section>
@@ -207,6 +237,24 @@ function MainApp() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Floating Back to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="fixed bottom-20 right-5 md:bottom-8 md:right-8 z-30 w-11 h-11 rounded-2xl bg-stone-900/90 hover:bg-amber-500 border border-amber-500/40 text-amber-400 hover:text-stone-950 shadow-2xl backdrop-blur-md flex items-center justify-center transition-colors group"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Modals & Drawers */}
       <CartDrawer

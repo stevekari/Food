@@ -33,11 +33,10 @@ export default function FoodCard({ food, onOpenDetails }) {
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.25 }}
       onClick={() => onOpenDetails(food)}
       className="group relative flex flex-col justify-between bg-stone-900/70 hover:bg-stone-900 border border-stone-800 hover:border-amber-500/40 rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-orange-950/20"
     >
