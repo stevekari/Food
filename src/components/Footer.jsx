@@ -1,8 +1,11 @@
 import React from 'react';
 import { ChefHat, Heart, ShieldCheck, Clock, Sparkles, Send, Instagram, Twitter, Facebook } from 'lucide-react';
 import logoImg from '../assets/kar.png';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-stone-950 border-t border-stone-800 text-stone-400 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -20,7 +23,7 @@ export default function Footer() {
             </div>
 
             <p className="text-stone-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              Gourmet dining engineered for speed. Farm-fresh organic ingredients, crafted by master culinary artists and delivered within 20 minutes.
+              {t('footer_tagline', 'Gourmet dining engineered for speed. Farm-fresh organic ingredients, crafted by master culinary artists and delivered within 20 minutes.')}
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -38,38 +41,44 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="md:col-span-2 space-y-3">
-            <h4 className="text-stone-200 font-bold uppercase tracking-wider text-xs">Cuisines</h4>
+            <h4 className="text-stone-200 font-bold uppercase tracking-wider text-xs">
+              {t('footer_cuisines_title', 'Cuisines')}
+            </h4>
             <ul className="space-y-2 text-stone-400">
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Smash Burgers</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Wood-Fired Pizza</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Asian Ramen & Bowls</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Power Greens & Salads</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Desserts & Shakes</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('cat_burgers', 'Smash Burgers')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('cat_pizza', 'Wood-Fired Pizza')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('cat_asian', 'Asian & Bowls')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('cat_salads', 'Power Greens')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('cat_desserts', 'Artisan Desserts')}</a></li>
             </ul>
           </div>
 
           {/* Wallet & Support */}
           <div className="md:col-span-2 space-y-3">
-            <h4 className="text-stone-200 font-bold uppercase tracking-wider text-xs">Account & Perks</h4>
+            <h4 className="text-stone-200 font-bold uppercase tracking-wider text-xs">
+              {t('footer_account_title', 'Account & Perks')}
+            </h4>
             <ul className="space-y-2 text-stone-400">
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Food Credit Wallet</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">VIP Member Rewards</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Live Order Tracker</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Gift Cards</a></li>
-              <li><a href="#" className="hover:text-amber-400 transition-colors">Contact Support</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('wallet_modal_title', 'Food Credit Wallet')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('deals_tag', 'VIP Member Rewards')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('nav_est_time', 'Live Order Tracker')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">{t('deals_title', 'Exclusive Offers')}</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Support 24/7</a></li>
             </ul>
           </div>
 
           {/* Newsletter / Promo signup */}
           <div className="md:col-span-3 space-y-3">
-            <h4 className="text-stone-200 font-bold uppercase tracking-wider text-xs">Join Foodie Club</h4>
+            <h4 className="text-stone-200 font-bold uppercase tracking-wider text-xs">
+              {t('footer_newsletter_title', 'Join Foodie Club')}
+            </h4>
             <p className="text-stone-400 text-xs">
-              Subscribe to unlock secret chef tasting menus and receive an instant $10 food credit voucher.
+              {t('footer_newsletter_desc', 'Subscribe to unlock secret chef tasting menus and receive an instant $10 food credit voucher.')}
             </p>
             <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed! $10 voucher code sent to your email.'); }} className="flex gap-2">
               <input
                 type="email"
-                placeholder="Your email address"
+                placeholder={t('footer_newsletter_placeholder', 'Your email address')}
                 required
                 className="w-full px-3 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white focus:outline-none placeholder-stone-500"
               />
@@ -87,15 +96,15 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-6 border-t border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-stone-500">
           <div>
-            © {new Date().getFullYear()} STEVE FOOD Technologies Inc. All rights reserved.
+            © {new Date().getFullYear()} {t('footer_copyright', 'STEVE FOOD Technologies Inc. All rights reserved.')}
           </div>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1 text-stone-400">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Safe & Hygienic Certified
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> {t('footer_safe_certified', 'Safe & Hygienic Certified')}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1 text-stone-400">
-              <Clock className="w-3.5 h-3.5 text-amber-400" /> 24/7 Late Night Delivery
+              <Clock className="w-3.5 h-3.5 text-amber-400" /> {t('footer_late_night', '24/7 Late Night Delivery')}
             </span>
           </div>
         </div>

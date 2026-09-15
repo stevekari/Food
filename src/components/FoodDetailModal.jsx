@@ -14,9 +14,11 @@ import {
   Heart
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FoodDetailModal({ food, isOpen, onClose }) {
   const { addToCart } = useCart();
+  const { t } = useLanguage();
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [instructions, setInstructions] = useState('');
@@ -107,12 +109,12 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
                 <div className="flex items-center gap-2 mb-2">
                   {food.isBestseller && (
                     <span className="px-2.5 py-1 rounded-md bg-orange-500 text-stone-950 text-[11px] font-extrabold uppercase">
-                      Bestseller
+                      {t('card_bestseller', 'Bestseller')}
                     </span>
                   )}
                   {food.isChefSpecial && (
                     <span className="px-2.5 py-1 rounded-md bg-amber-400 text-stone-950 text-[11px] font-extrabold uppercase">
-                      Chef Special
+                      {t('modal_chef_special', 'Chef Special')}
                     </span>
                   )}
                 </div>
@@ -129,7 +131,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
                 <div className="flex items-center gap-1.5 text-amber-400 font-bold text-sm">
                   <Star className="w-4 h-4 fill-amber-400" />
                   <span>{food.rating.toFixed(1)}</span>
-                  <span className="text-stone-400 font-normal">({food.reviewsCount} reviews)</span>
+                  <span className="text-stone-400 font-normal">({food.reviewsCount} {t('modal_reviews', 'reviews')})</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-stone-300 text-sm">
@@ -163,7 +165,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
               {/* Key Ingredients */}
               {food.ingredients && (
                 <div>
-                  <h4 className="text-xs uppercase font-bold text-stone-400 tracking-wider mb-2.5">Fresh Ingredients</h4>
+                  <h4 className="text-xs uppercase font-bold text-stone-400 tracking-wider mb-2.5">{t('modal_ingredients_title', 'Ingredients & Craftsmanship')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {food.ingredients.map((ing, i) => (
                       <span
@@ -181,7 +183,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
               {food.addons && food.addons.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs uppercase font-bold text-stone-400 tracking-wider">Customize Your Order</h4>
+                    <h4 className="text-xs uppercase font-bold text-stone-400 tracking-wider">{t('modal_customize_title', 'Customize & Add Extra Flavor')}</h4>
                     <span className="text-xs text-stone-500">Optional extras</span>
                   </div>
 
@@ -224,12 +226,12 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
 
               {/* Special Instructions Note */}
               <div>
-                <h4 className="text-xs uppercase font-bold text-stone-400 tracking-wider mb-2">Special Chef Note</h4>
+                <h4 className="text-xs uppercase font-bold text-stone-400 tracking-wider mb-2">{t('modal_instructions_title', 'Special Kitchen Notes')}</h4>
                 <textarea
                   rows={2}
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  placeholder="e.g. Sauce on the side, extra crispy fries, no onions..."
+                  placeholder={t('modal_instructions_placeholder', 'e.g. Extra napkins, dressing on the side, well-done bun...')}
                   className="w-full p-3.5 bg-stone-950/60 border border-stone-800 focus:border-amber-500/60 rounded-2xl text-xs text-stone-200 placeholder-stone-600 focus:outline-none focus:ring-1 focus:ring-amber-500/30 resize-none"
                 />
               </div>
@@ -268,7 +270,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
             >
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 stroke-[2.5]" />
-                <span>Add to Cart</span>
+                <span>{t('modal_add_to_cart', 'Add to Cart')}</span>
               </div>
               <span className="font-mono font-black text-stone-950 text-base">
                 ${totalPrice.toFixed(2)}

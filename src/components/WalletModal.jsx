@@ -14,6 +14,7 @@ import {
   Check
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const PACKAGES = [
   { id: 'p1', amount: 25, bonus: 0, label: 'Starter Pack', tag: 'Standard' },
@@ -23,6 +24,7 @@ const PACKAGES = [
 
 export default function WalletModal() {
   const { balance, transactions, topUp, resetCredit, isWalletModalOpen, setIsWalletModalOpen } = useWallet();
+  const { t } = useLanguage();
   const [selectedPkg, setSelectedPkg] = useState(PACKAGES[1]);
   const [customAmount, setCustomAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -75,8 +77,8 @@ export default function WalletModal() {
                   <Wallet className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="font-display font-bold text-xl text-white">Food Credit Wallet</h2>
-                  <p className="text-xs text-stone-400">Pre-loaded dining credits & instant 1-click checkout</p>
+                  <h2 className="font-display font-bold text-xl text-white">{t('wallet_modal_title', 'Food Credit Wallet')}</h2>
+                  <p className="text-xs text-stone-400">{t('wallet_modal_subtitle', 'Pre-loaded dining credits & instant 1-click checkout')}</p>
                 </div>
               </div>
 
@@ -91,7 +93,7 @@ export default function WalletModal() {
             {/* Glowing Big Balance Display */}
             <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent border border-amber-500/30 flex items-center justify-between">
               <div>
-                <span className="text-xs uppercase font-bold text-amber-400/90 tracking-wider">Available Credits</span>
+                <span className="text-xs uppercase font-bold text-amber-400/90 tracking-wider">{t('wallet_instant_balance', 'Available Credit Balance')}</span>
                 <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white mt-0.5">
                   ${balance.toFixed(2)} <span className="text-xs font-sans text-stone-400 font-medium">USD</span>
                 </div>
@@ -99,7 +101,7 @@ export default function WalletModal() {
 
               <div className="flex flex-col items-end gap-1.5">
                 <span className="text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Active & Spendable
+                  <Sparkles className="w-3 h-3" /> {t('wallet_bonus_badge', 'VIP Dining Privilege')}
                 </span>
                 <button
                   onClick={resetCredit}
@@ -118,7 +120,7 @@ export default function WalletModal() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs uppercase font-bold text-stone-400 tracking-wider flex items-center gap-1.5">
-                  <Plus className="w-3.5 h-3.5 text-amber-400" /> Choose Top-Up Package
+                  <Plus className="w-3.5 h-3.5 text-amber-400" /> {t('wallet_select_pack', 'Choose Top-Up Package')}
                 </h3>
                 <span className="text-xs text-amber-400 font-medium">Instant balance credit</span>
               </div>
@@ -168,7 +170,7 @@ export default function WalletModal() {
               <div className="mt-3 flex items-center gap-2">
                 <input
                   type="number"
-                  placeholder="Or enter custom amount ($)"
+                  placeholder={t('wallet_or_custom', 'Or Enter Custom Credit Amount ($)')}
                   value={customAmount}
                   onChange={(e) => {
                     setCustomAmount(e.target.value);
@@ -181,7 +183,7 @@ export default function WalletModal() {
                   disabled={isProcessing || (!customAmount && !selectedPkg)}
                   className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-stone-950 font-bold text-sm transition-all shadow-md"
                 >
-                  {isProcessing ? 'Processing...' : 'Load Credits'}
+                  {isProcessing ? 'Processing...' : t('wallet_top_up_cta', 'Load Credits to Wallet')}
                 </button>
               </div>
             </div>
@@ -189,7 +191,7 @@ export default function WalletModal() {
             {/* Transactions History Ledger */}
             <div>
               <h3 className="text-xs uppercase font-bold text-stone-400 tracking-wider mb-3">
-                Transaction History
+                {t('wallet_tx_history', 'Recent Credit Activity')}
               </h3>
 
               <div className="space-y-2 max-h-52 overflow-y-auto pr-1">

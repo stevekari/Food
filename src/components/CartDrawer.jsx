@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWallet } from '../context/WalletContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function CartDrawer({ onCheckoutClick }) {
   const {
@@ -46,6 +47,7 @@ export default function CartDrawer({ onCheckoutClick }) {
   } = useCart();
 
   const { balance } = useWallet();
+  const { t } = useLanguage();
 
   const handleApplyPromo = (e) => {
     e.preventDefault();
@@ -83,9 +85,9 @@ export default function CartDrawer({ onCheckoutClick }) {
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="font-display font-bold text-lg text-white">Your Feast Cart</h2>
+                    <h2 className="font-display font-bold text-lg text-white">{t('cart_title', 'Your Feast Cart')}</h2>
                     <p className="text-xs text-stone-400">
-                      {itemCount} {itemCount === 1 ? 'item' : 'items'} selected
+                      {itemCount} {t('cart_items_count', 'items selected')}
                     </p>
                   </div>
                 </div>
@@ -96,7 +98,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                       onClick={clearCart}
                       className="text-xs text-stone-400 hover:text-rose-400 transition-colors px-2 py-1 rounded-lg hover:bg-stone-800"
                     >
-                      Clear
+                      {t('cart_clear', 'Clear')}
                     </button>
                   )}
                   <button
@@ -116,15 +118,15 @@ export default function CartDrawer({ onCheckoutClick }) {
                     <div className="w-20 h-20 rounded-3xl bg-stone-800/60 border border-stone-700 flex items-center justify-center text-4xl mb-4 shadow-inner">
                       🍔
                     </div>
-                    <h3 className="font-display font-bold text-xl text-white">Your Cart is Empty</h3>
+                    <h3 className="font-display font-bold text-xl text-white">{t('cart_empty_title', 'Your Cart is Empty')}</h3>
                     <p className="text-sm text-stone-400 mt-2 max-w-xs leading-relaxed">
-                      Explore our handcrafted burgers, wood-fired pizzas, and fresh bowls to start your order!
+                      {t('cart_empty_desc', 'Explore our handcrafted burgers, wood-fired pizzas, and fresh bowls to start your order!')}
                     </p>
                     <button
                       onClick={closeCart}
                       className="mt-6 px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all"
                     >
-                      Explore Delicacies
+                      {t('cart_empty_btn', 'Explore Delicacies')}
                     </button>
                   </div>
                 ) : (
@@ -209,7 +211,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                     {/* Delivery Option Toggle */}
                     <div className="p-3.5 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-2">
                       <div className="text-xs font-bold uppercase text-stone-400 tracking-wider">
-                        Delivery Speed
+                        {t('cart_order_type_title', 'Delivery Speed')}
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <button
@@ -222,10 +224,10 @@ export default function CartDrawer({ onCheckoutClick }) {
                         >
                           <div className="flex items-center gap-1.5 text-xs font-bold">
                             <Bike className="w-3.5 h-3.5 text-amber-400" />
-                            <span>Standard</span>
+                            <span>{t('cart_standard_del', 'Standard')}</span>
                           </div>
                           <div className="text-[11px] text-stone-400">
-                            25-35 min • {isFreeDeliveryEligible ? 'FREE' : '$2.99'}
+                            25-35 min • {isFreeDeliveryEligible ? t('cart_free_delivery', 'FREE') : '$2.99'}
                           </div>
                         </button>
 
@@ -239,7 +241,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                         >
                           <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
                             <Zap className="w-3.5 h-3.5 fill-amber-400" />
-                            <span className="text-white">Priority Express</span>
+                            <span className="text-white">{t('cart_priority_del', 'Priority Express')}</span>
                           </div>
                           <div className="text-[11px] text-stone-400">
                             15-20 min • {isFreeDeliveryEligible ? '$2.00' : '$4.99'}
@@ -251,10 +253,10 @@ export default function CartDrawer({ onCheckoutClick }) {
                     {/* Promo Code Box */}
                     <div className="p-3.5 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-2">
                       <div className="text-xs font-bold uppercase text-stone-400 tracking-wider flex items-center justify-between">
-                        <span>Promo Code</span>
+                        <span>{t('cart_promo_title', 'Promo Code')}</span>
                         <div className="flex items-center gap-1 text-[11px] text-amber-400">
                           <Tag className="w-3 h-3" />
-                          <span>Tap code:</span>
+                          <span>{t('cart_tap_code', 'Tap code:')}</span>
                           <button
                             onClick={() => applyPromoCode('STEVE20')}
                             className="underline hover:text-white font-mono"
@@ -276,14 +278,14 @@ export default function CartDrawer({ onCheckoutClick }) {
                             onClick={removePromoCode}
                             className="text-stone-400 hover:text-rose-400 text-xs px-1.5 py-0.5"
                           >
-                            Remove
+                            {t('cart_remove', 'Remove')}
                           </button>
                         </div>
                       ) : (
                         <form onSubmit={handleApplyPromo} className="flex gap-2">
                           <input
                             type="text"
-                            placeholder="Enter STEVE20, FREEDEL..."
+                            placeholder={t('cart_promo_placeholder', 'Enter STEVE20, FREEDEL...')}
                             value={promoInput}
                             onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
                             className="flex-1 px-3 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500/60 rounded-xl text-xs text-white placeholder-stone-500 font-mono focus:outline-none uppercase"
@@ -292,7 +294,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                             type="submit"
                             className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold text-xs rounded-xl transition-colors"
                           >
-                            Apply
+                            {t('cart_apply', 'Apply')}
                           </button>
                         </form>
                       )}
@@ -302,7 +304,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                     <div className="p-3.5 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-2">
                       <div className="text-xs font-bold uppercase text-stone-400 tracking-wider flex items-center gap-1.5">
                         <HeartHandshake className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Courier Appreciation Tip</span>
+                        <span>{t('cart_tip_courier', 'Courier Appreciation Tip')}</span>
                       </div>
                       <div className="grid grid-cols-4 gap-1.5">
                         {[0, 2, 3, 5].map((amount) => (
@@ -332,22 +334,22 @@ export default function CartDrawer({ onCheckoutClick }) {
                   {/* Cost Breakdown */}
                   <div className="space-y-1.5 text-xs text-stone-400">
                     <div className="flex justify-between">
-                      <span>Subtotal</span>
+                      <span>{t('cart_subtotal', 'Subtotal')}</span>
                       <span className="font-mono text-stone-200">${subtotal.toFixed(2)}</span>
                     </div>
 
                     {discount > 0 && (
                       <div className="flex justify-between text-emerald-400 font-semibold">
-                        <span>Promo Discount ({appliedPromo?.code})</span>
+                        <span>{t('cart_discount', 'Promo Discount')} ({appliedPromo?.code})</span>
                         <span className="font-mono">-${discount.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between">
-                      <span>Delivery Fee</span>
+                      <span>{t('cart_delivery_fee', 'Delivery Fee')}</span>
                       <span className="font-mono text-stone-200">
                         {deliveryFee === 0 ? (
-                          <span className="text-emerald-400 font-bold">FREE</span>
+                          <span className="text-emerald-400 font-bold">{t('cart_free_delivery', 'FREE')}</span>
                         ) : (
                           `$${deliveryFee.toFixed(2)}`
                         )}
@@ -355,19 +357,19 @@ export default function CartDrawer({ onCheckoutClick }) {
                     </div>
 
                     <div className="flex justify-between">
-                      <span>Estimated Tax (8.25%)</span>
+                      <span>{t('cart_tax', 'Estimated Tax')}</span>
                       <span className="font-mono text-stone-200">${tax.toFixed(2)}</span>
                     </div>
 
                     {tip > 0 && (
                       <div className="flex justify-between">
-                        <span>Courier Tip</span>
+                        <span>{t('cart_tip', 'Courier Tip')}</span>
                         <span className="font-mono text-stone-200">${tip.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
-                      <span className="font-bold text-sm">Estimated Total</span>
+                      <span className="font-bold text-sm">{t('cart_total', 'Estimated Total')}</span>
                       <span className="font-mono font-extrabold text-xl text-amber-400">
                         ${total.toFixed(2)}
                       </span>
@@ -376,14 +378,14 @@ export default function CartDrawer({ onCheckoutClick }) {
 
                   {/* Wallet Credit Availability Notice */}
                   <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between text-xs">
-                    <span className="text-stone-300">Wallet Credit: <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong></span>
+                    <span className="text-stone-300">{t('cart_wallet_credit', 'Wallet Credit:')} <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong></span>
                     {balance >= total ? (
                       <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                        <Check className="w-3.5 h-3.5" /> Covered with Credit
+                        <Check className="w-3.5 h-3.5" /> {t('cart_covered_credit', 'Covered with Credit')}
                       </span>
                     ) : (
                       <span className="text-amber-400 font-semibold">
-                        Partial or Card Pay
+                        {t('cart_partial_credit', 'Partial or Card Pay')}
                       </span>
                     )}
                   </div>
@@ -398,7 +400,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                     }}
                     className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 text-stone-950 font-black text-base shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 flex items-center justify-center gap-2 transition-all"
                   >
-                    <span>Proceed to Checkout</span>
+                    <span>{t('cart_checkout_btn', 'Proceed to Checkout')}</span>
                     <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                   </motion.button>
 

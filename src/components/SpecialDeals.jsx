@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import { Sparkles, Flame, Gift, Percent, ArrowRight, Zap, Copy, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWallet } from '../context/WalletContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function SpecialDeals() {
   const { applyPromoCode } = useCart();
   const { setIsWalletModalOpen } = useWallet();
+  const { t } = useLanguage();
   const [copiedCode, setCopiedCode] = React.useState(null);
 
   const handleCopy = (code) => {
@@ -24,14 +26,14 @@ export default function SpecialDeals() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
-              <Sparkles className="w-3.5 h-3.5" /> Exclusive Member Perks
+              <Sparkles className="w-3.5 h-3.5" /> {t('deals_tag', 'Exclusive Member Perks')}
             </div>
             <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
-              Limited-Time Food Offers & Credits
+              {t('deals_title', 'Limited-Time Food Offers & Credits')}
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-stone-400 max-w-md mt-2 md:mt-0">
-            Stack your pre-loaded food credits with flash coupons for maximum culinary delight.
+            {t('deals_subtitle', 'Stack your pre-loaded food credits with flash coupons for maximum culinary delight.')}
           </p>
         </div>
 
@@ -54,9 +56,9 @@ export default function SpecialDeals() {
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-xl text-white">20% Off Entire Order</h3>
+              <h3 className="font-display font-bold text-xl text-white">{t('deals_card1_title', '20% Off Entire Order')}</h3>
               <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                Applies instantly to all gourmet smash burgers, artisan pizzas, and poke bowls.
+                {t('deals_card1_desc', 'Applies instantly to all gourmet smash burgers, artisan pizzas, and poke bowls.')}
               </p>
             </div>
 
@@ -69,7 +71,7 @@ export default function SpecialDeals() {
                 className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow"
               >
                 {copiedCode === 'STEVE20' ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedCode === 'STEVE20' ? 'Applied!' : 'Apply Code'}</span>
+                <span>{copiedCode === 'STEVE20' ? t('deals_applied', 'Applied!') : t('deals_apply_code', 'Apply Code')}</span>
               </button>
             </div>
           </motion.div>
@@ -91,9 +93,9 @@ export default function SpecialDeals() {
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-xl text-white">Get +$15 Free Bonus</h3>
+              <h3 className="font-display font-bold text-xl text-white">{t('deals_card2_title', 'Top-Up $50, Get $5 Free')}</h3>
               <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                Top up $100 in Food Credits today and automatically get $115 total dining power.
+                {t('deals_card2_desc', '10% instant food credit bonus automatically added to your digital wallet balance.')}
               </p>
             </div>
 
@@ -103,7 +105,7 @@ export default function SpecialDeals() {
                 onClick={() => setIsWalletModalOpen(true)}
                 className="px-3.5 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow"
               >
-                <span>Top-Up Now</span>
+                <span>{t('deals_claim_bonus', 'Claim Bonus')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -126,9 +128,9 @@ export default function SpecialDeals() {
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-xl text-white">Free Express Delivery</h3>
+              <h3 className="font-display font-bold text-xl text-white">{t('deals_card3_title', 'Free Express Delivery')}</h3>
               <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                Enjoy complimentary priority courier delivery on all orders over $45.
+                {t('deals_card3_desc', 'Zero courier fee on all orders over $35 with guaranteed under 20-minute delivery.')}
               </p>
             </div>
 
@@ -141,7 +143,7 @@ export default function SpecialDeals() {
                 className="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow"
               >
                 {copiedCode === 'FREEDEL' ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedCode === 'FREEDEL' ? 'Applied!' : 'Apply Code'}</span>
+                <span>{copiedCode === 'FREEDEL' ? t('deals_applied', 'Applied!') : t('deals_apply_code', 'Apply Code')}</span>
               </button>
             </div>
           </motion.div>

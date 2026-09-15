@@ -21,11 +21,13 @@ import {
 import { useCart } from '../context/CartContext';
 import { useWallet } from '../context/WalletContext';
 import { useToast } from '../context/ToastContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
   const { items, subtotal, discount, deliveryFee, tax, tip, total, appliedPromo, deliveryAddress, setDeliveryAddress, deliveryType, clearCart } = useCart();
   const { balance, deductCredit, setIsWalletModalOpen } = useWallet();
   const { addToast } = useToast();
+  const { t } = useLanguage();
 
   const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'card' | 'apple' | 'cash'
   const [phoneNumber, setPhoneNumber] = useState('(555) 382-9901');
@@ -121,10 +123,10 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 <Lock className="w-5 h-5 stroke-[2.5]" />
               </div>
               <div>
-                <h2 className="font-display font-bold text-xl text-white">Express Checkout</h2>
+                <h2 className="font-display font-bold text-xl text-white">{t('checkout_title', 'Express Checkout')}</h2>
                 <div className="flex items-center gap-2 text-xs text-stone-400">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>256-Bit Encrypted & Verified</span>
+                  <span>{t('checkout_subtitle', '256-Bit Encrypted & Verified')}</span>
                 </div>
               </div>
             </div>
@@ -147,7 +149,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
               <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase font-bold text-stone-400 tracking-wider flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> Delivery Address
+                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> {t('checkout_step1', '1. Delivery Information')}
                   </span>
                   <span className="text-[11px] text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">
                     {deliveryType === 'priority' ? 'Priority Express (15-20 min)' : 'Standard (25-35 min)'}
@@ -159,7 +161,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                     type="text"
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="Street Address, Apt / Suite"
+                    placeholder={t('checkout_street_placeholder', 'Street Address, Apt / Suite')}
                     className="w-full px-3.5 py-2.5 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs sm:text-sm text-white placeholder-stone-500 focus:outline-none"
                   />
                   <div className="grid grid-cols-2 gap-2">
@@ -167,14 +169,14 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                       type="text"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="Contact Phone"
+                      placeholder={t('checkout_phone_label', 'Contact Phone')}
                       className="w-full px-3.5 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder-stone-500 focus:outline-none"
                     />
                     <input
                       type="text"
                       value={dropoffNotes}
                       onChange={(e) => setDropoffNotes(e.target.value)}
-                      placeholder="Dropoff instructions"
+                      placeholder={t('checkout_dropoff_label', 'Dropoff instructions')}
                       className="w-full px-3.5 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder-stone-500 focus:outline-none"
                     />
                   </div>
@@ -184,7 +186,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
               {/* Payment Method Selector */}
               <div className="space-y-3">
                 <span className="text-xs uppercase font-bold text-stone-400 tracking-wider">
-                  Select Payment Method
+                  {t('checkout_step2', '2. Select Payment Method')}
                 </span>
 
                 {/* Option 1: FOOD CREDIT WALLET (Recommended) */}
@@ -210,13 +212,13 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                         </div>
                         <div>
                           <div className="text-sm font-bold text-white flex items-center gap-2">
-                            Food Credit Balance
+                            {t('checkout_pay_wallet', 'Food Credit Balance')}
                             <span className="text-[10px] bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded font-black tracking-wide">
                               FASTEST
                             </span>
                           </div>
                           <div className="text-xs text-stone-400">
-                            Available Credit: <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong>
+                            {t('checkout_available_bal', 'Available Credit:')} <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong>
                           </div>
                         </div>
                       </div>
@@ -238,7 +240,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                         <div className="flex items-center gap-2 text-emerald-300">
                           <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                           <span>
-                            Remaining balance after order: <strong className="font-mono">${remainingBalanceAfterOrder.toFixed(2)}</strong>
+                            {t('checkout_sufficient_bal', 'Instant 1-tap checkout. No bank confirmation required.')}
                           </span>
                         </div>
                       ) : (
@@ -255,7 +257,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                             }}
                             className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-lg font-bold text-xs flex items-center gap-1 shadow"
                           >
-                            <PlusCircle className="w-3.5 h-3.5" /> Top Up Credit
+                            <PlusCircle className="w-3.5 h-3.5" /> {t('checkout_top_up_btn', 'Top Up Credit')}
                           </button>
                         </div>
                       )}
@@ -284,7 +286,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                         <CreditCard className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-white">Credit / Debit Card</div>
+                        <div className="text-sm font-bold text-white">{t('checkout_pay_card', 'Credit / Debit Card')}</div>
                         <div className="text-xs text-stone-400">Visa, Mastercard, Amex</div>
                       </div>
                     </div>
@@ -430,7 +432,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                       <div className="w-7 h-7 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
                         <Smartphone className="w-4 h-4" />
                       </div>
-                      <span className="text-xs sm:text-sm font-bold text-white">Apple Pay / Google Pay</span>
+                      <span className="text-xs sm:text-sm font-bold text-white">{t('checkout_pay_apple', 'Apple Pay / Google Pay')}</span>
                     </div>
                   </div>
                   <span className="text-[11px] text-stone-400">1-Touch Pay</span>
@@ -455,7 +457,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                       <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
                         <Banknote className="w-4 h-4" />
                       </div>
-                      <span className="text-xs sm:text-sm font-bold text-white">Cash on Delivery</span>
+                      <span className="text-xs sm:text-sm font-bold text-white">{t('checkout_pay_cash', 'Cash on Delivery')}</span>
                     </div>
                   </div>
                   <span className="text-[11px] text-stone-400">Pay Courier in Person</span>
@@ -469,7 +471,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
             <div className="lg:col-span-5 flex flex-col justify-between bg-stone-950/70 p-5 rounded-2xl border border-stone-800 space-y-4">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-stone-300 pb-3 border-b border-stone-800">
-                  Order Summary ({items.length} dishes)
+                  {t('checkout_order_summary', 'Order Summary')} ({items.length} dishes)
                 </h3>
 
                 {/* Items Mini List */}
@@ -492,36 +494,36 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 {/* Pricing Summary */}
                 <div className="mt-4 pt-3 border-t border-stone-800 space-y-1.5 text-xs text-stone-400">
                   <div className="flex justify-between">
-                    <span>Subtotal</span>
+                    <span>{t('cart_subtotal', 'Subtotal')}</span>
                     <span className="font-mono text-stone-200">${subtotal.toFixed(2)}</span>
                   </div>
 
                   {discount > 0 && (
                     <div className="flex justify-between text-emerald-400 font-medium">
-                      <span>Promo Discount ({appliedPromo?.code})</span>
+                      <span>{t('cart_discount', 'Promo Discount')} ({appliedPromo?.code})</span>
                       <span className="font-mono">-${discount.toFixed(2)}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between">
-                    <span>Delivery</span>
-                    <span className="font-mono text-stone-200">{deliveryFee === 0 ? 'FREE' : `$${deliveryFee.toFixed(2)}`}</span>
+                    <span>{t('cart_delivery_fee', 'Delivery')}</span>
+                    <span className="font-mono text-stone-200">{deliveryFee === 0 ? t('cart_free_delivery', 'FREE') : `$${deliveryFee.toFixed(2)}`}</span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span>Tax (8.25%)</span>
+                    <span>{t('cart_tax', 'Tax (8.25%)')}</span>
                     <span className="font-mono text-stone-200">${tax.toFixed(2)}</span>
                   </div>
 
                   {tip > 0 && (
                     <div className="flex justify-between">
-                      <span>Driver Tip</span>
+                      <span>{t('cart_tip', 'Driver Tip')}</span>
                       <span className="font-mono text-stone-200">${tip.toFixed(2)}</span>
                     </div>
                   )}
 
                   <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
-                    <span className="font-bold text-sm">Grand Total</span>
+                    <span className="font-bold text-sm">{t('cart_total', 'Grand Total')}</span>
                     <span className="font-mono font-black text-2xl text-amber-400">
                       ${total.toFixed(2)}
                     </span>
@@ -555,7 +557,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                   ) : (
                     <div className="flex items-center gap-2">
                       <Lock className="w-4 h-4" />
-                      <span>Place Order • ${total.toFixed(2)}</span>
+                      <span>{t('checkout_place_order_btn', 'Place Order')} • ${total.toFixed(2)}</span>
                     </div>
                   )}
                 </motion.button>

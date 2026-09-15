@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WifiOff, Wifi, RefreshCw, Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function OfflineToast({ isOnline, isUpdateAvailable, onUpdateApp }) {
+  const { t } = useLanguage();
   const [showOnlineToast, setShowOnlineToast] = useState(false);
   const [wasOffline, setWasOffline] = useState(false);
 
@@ -32,7 +34,7 @@ export default function OfflineToast({ isOnline, isUpdateAvailable, onUpdateApp 
           >
             <WifiOff className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
             <span>
-              <strong>Offline Mode:</strong> Cached dishes and food wallet are available.
+              {t('offline_alert', 'Offline Mode: Cached dishes and food wallet are available.')}
             </span>
           </motion.div>
         )}
@@ -47,7 +49,7 @@ export default function OfflineToast({ isOnline, isUpdateAvailable, onUpdateApp 
           >
             <Wifi className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>
-              <strong>Back Online!</strong> Connected for express ordering & live kitchen sync.
+              {t('online_alert', 'Back Online! Connected for express ordering & live kitchen sync.')}
             </span>
           </motion.div>
         )}
@@ -62,14 +64,14 @@ export default function OfflineToast({ isOnline, isUpdateAvailable, onUpdateApp 
           >
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>New STEVE FOOD update ready!</span>
+              <span>{t('update_alert', 'New STEVE FOOD update ready!')}</span>
             </div>
             <button
               onClick={onUpdateApp}
-              className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-1.5 transition-colors shrink-0"
+              className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-1.5 transition-colors shrink-0"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Update Now</span>
+              <span>{t('update_btn', 'Update Now')}</span>
             </button>
           </motion.div>
         )}

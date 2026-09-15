@@ -12,6 +12,7 @@ import {
   ArrowUpDown
 } from 'lucide-react';
 import { CATEGORIES, DIETARY_FILTERS } from '../data/foodData';
+import { useLanguage } from '../context/LanguageContext';
 
 const ICONS_MAP = {
   Sparkles,
@@ -32,6 +33,16 @@ export default function CategoryFilter({
   onSortChange,
   itemsCount
 }) {
+  const { t } = useLanguage();
+
+  const getCategoryName = (cat) => {
+    return t(`cat_${cat.id}`, cat.name);
+  };
+
+  const getDietaryLabel = (diet) => {
+    return t(`filter_${diet.id.replace('-', '_')}`, diet.label);
+  };
+
   return (
     <div className="w-full mb-10">
       
@@ -60,7 +71,7 @@ export default function CategoryFilter({
               )}
 
               <IconComponent className={`w-4 h-4 ${isSelected ? 'text-stone-950' : 'text-amber-400'}`} />
-              <span>{cat.name}</span>
+              <span>{getCategoryName(cat)}</span>
             </button>
           );
         })}
@@ -72,7 +83,7 @@ export default function CategoryFilter({
         {/* Dietary Filters */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold text-stone-400 mr-1 flex items-center gap-1.5">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-stone-400" /> Filter:
+            <SlidersHorizontal className="w-3.5 h-3.5 text-stone-400" /> {t('filter_label', 'Filter:')}
           </span>
           {DIETARY_FILTERS.map((diet) => {
             const isDietSelected = selectedDietary === diet.id;
@@ -86,7 +97,7 @@ export default function CategoryFilter({
                     : 'bg-stone-900/60 hover:bg-stone-800 text-stone-400 hover:text-stone-200 border border-stone-800/70'
                 }`}
               >
-                {diet.label}
+                {getDietaryLabel(diet)}
               </button>
             );
           })}
@@ -95,7 +106,7 @@ export default function CategoryFilter({
         {/* Sort Controls & Count */}
         <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
           <span className="text-xs text-stone-400">
-            Showing <strong className="text-white font-semibold">{itemsCount}</strong> delicacies
+            {t('showing_items', 'Showing')} <strong className="text-white font-semibold">{itemsCount}</strong> {t('delicacies_count', 'delicacies')}
           </span>
 
           <div className="relative flex items-center gap-1.5 bg-stone-900 border border-stone-800 px-3 py-1.5 rounded-xl text-xs text-stone-300">
@@ -105,11 +116,11 @@ export default function CategoryFilter({
               onChange={(e) => onSortChange(e.target.value)}
               className="bg-transparent text-stone-200 focus:outline-none cursor-pointer pr-2 font-medium"
             >
-              <option value="featured" className="bg-stone-900 text-white">✨ Featured</option>
-              <option value="rating" className="bg-stone-900 text-white">⭐ Highest Rated</option>
-              <option value="price-low" className="bg-stone-900 text-white">💲 Price: Low to High</option>
-              <option value="price-high" className="bg-stone-900 text-white">💎 Price: High to Low</option>
-              <option value="time" className="bg-stone-900 text-white">⚡ Fastest Delivery</option>
+              <option value="featured" className="bg-stone-900 text-white">{t('sort_featured', '✨ Featured')}</option>
+              <option value="rating" className="bg-stone-900 text-white">{t('sort_rating', '⭐ Highest Rated')}</option>
+              <option value="price-low" className="bg-stone-900 text-white">{t('sort_price_low', '💲 Price: Low to High')}</option>
+              <option value="price-high" className="bg-stone-900 text-white">{t('sort_price_high', '💎 Price: High to Low')}</option>
+              <option value="time" className="bg-stone-900 text-white">{t('sort_time', '⚡ Fastest Delivery')}</option>
             </select>
           </div>
         </div>

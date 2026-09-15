@@ -11,9 +11,11 @@ import {
   Zap
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FoodCard({ food, onOpenDetails }) {
   const { addToCart } = useCart();
+  const { t } = useLanguage();
   const [isJustAdded, setIsJustAdded] = useState(false);
 
   const handleQuickAdd = (e) => {
@@ -53,12 +55,12 @@ export default function FoodCard({ food, onOpenDetails }) {
         <div className="absolute top-3.5 left-3.5 flex flex-col gap-1.5 items-start">
           {food.isBestseller && (
             <span className="px-2.5 py-1 rounded-lg bg-orange-500/90 backdrop-blur-md text-stone-950 text-[11px] font-extrabold uppercase tracking-wider flex items-center gap-1 shadow-md">
-              <Flame className="w-3 h-3 fill-stone-950" /> Bestseller
+              <Flame className="w-3 h-3 fill-stone-950" /> {t('card_bestseller', 'Bestseller')}
             </span>
           )}
           {food.isChefSpecial && (
             <span className="px-2.5 py-1 rounded-lg bg-amber-400/90 backdrop-blur-md text-stone-950 text-[11px] font-extrabold uppercase tracking-wider flex items-center gap-1 shadow-md">
-              <Sparkles className="w-3 h-3" /> Chef Pick
+              <Sparkles className="w-3 h-3" /> {t('card_chef_pick', 'Chef Pick')}
             </span>
           )}
         </div>
@@ -118,7 +120,7 @@ export default function FoodCard({ food, onOpenDetails }) {
               ))}
               {food.ingredients.length > 3 && (
                 <span className="text-[10px] text-stone-500 bg-stone-800/40 px-1.5 py-0.5 rounded-md">
-                  +{food.ingredients.length - 3} more
+                  +{food.ingredients.length - 3} {t('card_more_ingredients', 'more')}
                 </span>
               )}
             </div>
@@ -145,7 +147,7 @@ export default function FoodCard({ food, onOpenDetails }) {
                 className="px-3.5 py-2 rounded-xl bg-stone-800 hover:bg-amber-500 text-stone-200 hover:text-stone-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-md group/btn"
               >
                 <Sliders className="w-3.5 h-3.5 text-amber-400 group-hover/btn:text-stone-950" />
-                <span>Customize</span>
+                <span>{t('card_customize', 'Customize')}</span>
               </button>
             ) : (
               <motion.button
@@ -160,12 +162,12 @@ export default function FoodCard({ food, onOpenDetails }) {
                 {isJustAdded ? (
                   <>
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    <span>Added!</span>
+                    <span>{t('card_added', 'Added!')}</span>
                   </>
                 ) : (
                   <>
                     <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                    <span>Add</span>
+                    <span>{t('card_add', 'Add')}</span>
                   </>
                 )}
               </motion.button>

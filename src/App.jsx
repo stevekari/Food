@@ -5,6 +5,7 @@ import { FOOD_ITEMS } from './data/foodData';
 import { ToastProvider } from './context/ToastContext';
 import { WalletProvider, useWallet } from './context/WalletContext';
 import { CartProvider, useCart } from './context/CartContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -26,6 +27,7 @@ import OfflineToast from './components/OfflineToast';
 import MobileBottomNav from './components/MobileBottomNav';
 
 function MainApp() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDietary, setSelectedDietary] = useState('all');
@@ -139,13 +141,13 @@ function MainApp() {
         {/* Section Header */}
         <div className="mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
-            <UtensilsCrossed className="w-3.5 h-3.5" /> Culinary Masterpieces
+            <UtensilsCrossed className="w-3.5 h-3.5" /> {t('menu_section_tag', 'Culinary Masterpieces')}
           </div>
           <h2 className="font-display font-black text-3xl sm:text-4xl text-white">
-            Explore Handcrafted Menu
+            {t('menu_section_title', 'Explore Handcrafted Menu')}
           </h2>
           <p className="text-sm text-stone-400 mt-1 max-w-lg">
-            Prepared to order by expert chefs using fresh, locally sourced premium ingredients.
+            {t('menu_section_subtitle', 'Prepared to order by expert chefs using fresh, locally sourced premium ingredients.')}
           </p>
         </div>
 
@@ -166,9 +168,9 @@ function MainApp() {
             <div className="w-16 h-16 rounded-2xl bg-stone-800 flex items-center justify-center mx-auto text-2xl mb-4">
               🔍
             </div>
-            <h3 className="font-display font-bold text-xl text-white">No dishes found</h3>
+            <h3 className="font-display font-bold text-xl text-white">{t('no_dishes_found', 'No dishes found')}</h3>
             <p className="text-sm text-stone-400 mt-1 max-w-sm mx-auto">
-              We couldn't find any dishes matching "{searchQuery}". Try clearing search or selecting a different category.
+              {t('no_dishes_desc', 'We couldn\'t find any dishes matching your search. Try clearing filters.')}
             </p>
             <button
               onClick={() => {
@@ -178,7 +180,7 @@ function MainApp() {
               }}
               className="mt-5 px-5 py-2.5 rounded-xl bg-amber-500 text-stone-950 font-bold text-xs hover:bg-amber-400 transition-colors"
             >
-              Reset All Filters
+              {t('reset_filters', 'Reset All Filters')}
             </button>
           </div>
         ) : (
@@ -270,13 +272,15 @@ function MainApp() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <WalletProvider>
-        <CartProvider>
-          <MainApp />
-        </CartProvider>
-      </WalletProvider>
-    </ToastProvider>
+    <LanguageProvider>
+      <ToastProvider>
+        <WalletProvider>
+          <CartProvider>
+            <MainApp />
+          </CartProvider>
+        </WalletProvider>
+      </ToastProvider>
+    </LanguageProvider>
   );
 }
 

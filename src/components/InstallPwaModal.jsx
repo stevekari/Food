@@ -15,6 +15,7 @@ import {
   Laptop
 } from 'lucide-react';
 import logoImg from '../assets/kar.png';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function InstallPwaModal({ 
   isOpen, 
@@ -23,6 +24,8 @@ export default function InstallPwaModal({
   isNativeInstallable, 
   isIOS 
 }) {
+  const { t } = useLanguage();
+
   if (!isOpen) return null;
 
   return (
@@ -69,7 +72,7 @@ export default function InstallPwaModal({
                 <Zap className="w-3 h-3" /> PWA Official App
               </div>
               <h3 className="font-display font-black text-2xl text-white">
-                Install STEVE FOOD
+                {t('pwa_title', 'Install STEVE FOOD')}
               </h3>
             </div>
           </div>
@@ -81,9 +84,9 @@ export default function InstallPwaModal({
                 <Zap className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-stone-100">1-Tap Instant Launch</h4>
+                <h4 className="text-xs font-bold text-stone-100">{t('pwa_perk_1', '1-Tap Instant Launch')}</h4>
                 <p className="text-[11px] text-stone-400 mt-0.5">
-                  Access gourmet menus right from your Home Screen or Dock with full-screen immersive view.
+                  {t('pwa_perk_1_desc', 'Access gourmet menus right from your Home Screen or Dock with full-screen immersive view.')}
                 </p>
               </div>
             </div>
@@ -93,9 +96,9 @@ export default function InstallPwaModal({
                 <WifiOff className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-stone-100">Offline & Fast Caching</h4>
+                <h4 className="text-xs font-bold text-stone-100">{t('pwa_perk_2', 'Offline & Fast Caching')}</h4>
                 <p className="text-[11px] text-stone-400 mt-0.5">
-                  Browse dishes, cached menus, and your food credit wallet even with spotty connectivity.
+                  {t('pwa_perk_2_desc', 'Browse dishes, cached menus, and your food credit wallet even with spotty connectivity.')}
                 </p>
               </div>
             </div>
@@ -105,9 +108,9 @@ export default function InstallPwaModal({
                 <Bell className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-stone-100">Express Order Updates</h4>
+                <h4 className="text-xs font-bold text-stone-100">{t('pwa_perk_3', 'Express Order Updates')}</h4>
                 <p className="text-[11px] text-stone-400 mt-0.5">
-                  Real-time live delivery timer and instant food credit bonus notifications.
+                  {t('pwa_perk_3_desc', 'Real-time live delivery timer and instant food credit bonus notifications.')}
                 </p>
               </div>
             </div>
@@ -139,7 +142,7 @@ export default function InstallPwaModal({
               className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-stone-950 font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-all transform active:scale-98 mb-3"
             >
               <Download className="w-5 h-5 stroke-[2.5]" />
-              Install STEVE FOOD App Now
+              {t('pwa_install_now', 'Install STEVE FOOD App Now')}
             </button>
           ) : (
             /* Desktop / General Browser fallback */

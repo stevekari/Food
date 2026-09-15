@@ -8,52 +8,54 @@ import {
   Clock, 
   Phone, 
   MessageSquare, 
-  Star,
-  Sparkles,
-  Play
+  Star, 
+  Sparkles, 
+  Play 
 } from 'lucide-react';
-
-const STAGES = [
-  {
-    id: 1,
-    title: 'Order Confirmed',
-    subtitle: 'Kitchen received your order',
-    icon: CheckCircle2,
-    eta: '25 min'
-  },
-  {
-    id: 2,
-    title: 'Chef Preparing',
-    subtitle: 'Fresh ingredients sizzling on the grill',
-    icon: ChefHat,
-    eta: '18 min'
-  },
-  {
-    id: 3,
-    title: 'Courier on the Way',
-    subtitle: 'Speeding towards your address',
-    icon: Bike,
-    eta: '8 min'
-  },
-  {
-    id: 4,
-    title: 'Arrived & Delivered',
-    subtitle: 'Bon Appetit! Enjoy your feast',
-    icon: Home,
-    eta: '0 min'
-  }
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function OrderTracker({ order }) {
+  const { t } = useLanguage();
   const [currentStageIndex, setCurrentStageIndex] = useState(1); // 0 to 3
 
+  const STAGES = [
+    {
+      id: 1,
+      title: t('order_stage_1_title', 'Order Confirmed'),
+      subtitle: t('order_stage_1_sub', 'Kitchen received your order'),
+      icon: CheckCircle2,
+      eta: '25 min'
+    },
+    {
+      id: 2,
+      title: t('order_stage_2_title', 'Chef Preparing'),
+      subtitle: t('order_stage_2_sub', 'Fresh ingredients sizzling on the grill'),
+      icon: ChefHat,
+      eta: '18 min'
+    },
+    {
+      id: 3,
+      title: t('order_stage_3_title', 'Courier on the Way'),
+      subtitle: t('order_stage_3_sub', 'Speeding towards your address'),
+      icon: Bike,
+      eta: '8 min'
+    },
+    {
+      id: 4,
+      title: t('order_stage_4_title', 'Arrived & Delivered'),
+      subtitle: t('order_stage_4_sub', 'Bon Appetit! Enjoy your feast'),
+      icon: Home,
+      eta: '0 min'
+    }
+  ];
+
   useEffect(() => {
-    // Auto advance stage every 10 seconds for a lively simulation
+    // Auto advance stage every 9 seconds for a lively simulation
     const interval = setInterval(() => {
       setCurrentStageIndex((prev) => (prev < STAGES.length - 1 ? prev + 1 : prev));
     }, 9000);
     return () => clearInterval(interval);
-  }, []);
+  }, [STAGES.length]);
 
   const progressPercentage = ((currentStageIndex) / (STAGES.length - 1)) * 100;
 
@@ -67,7 +69,7 @@ export default function OrderTracker({ order }) {
             <Clock className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-[11px] uppercase font-bold text-stone-400">Estimated Delivery</div>
+            <div className="text-[11px] uppercase font-bold text-stone-400">{t('order_est_delivery', 'Estimated Delivery')}</div>
             <div className="text-lg font-bold font-mono text-white">
               {STAGES[currentStageIndex].eta} ({order?.estimatedArrival || '20-30 min'})
             </div>
@@ -80,7 +82,7 @@ export default function OrderTracker({ order }) {
           title="Simulate courier progress"
         >
           <Play className="w-3 h-3 fill-amber-400" />
-          <span>Advance Step</span>
+          <span>{t('order_advance_step', 'Advance Step')}</span>
         </button>
       </div>
 

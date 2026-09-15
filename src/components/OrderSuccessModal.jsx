@@ -9,13 +9,15 @@ import {
   Bike, 
   Download, 
   Share2, 
-  ArrowRight,
-  ShieldCheck,
-  ShoppingBag
+  ArrowRight, 
+  ShieldCheck, 
+  ShoppingBag 
 } from 'lucide-react';
 import OrderTracker from './OrderTracker';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function OrderSuccessModal({ order, isOpen, onClose }) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('tracker'); // 'tracker' | 'receipt'
 
   useEffect(() => {
@@ -89,7 +91,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
             </div>
 
             <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
-              Order Confirmed & Sizzling!
+              {t('order_success_title', 'Order Confirmed & Sizzling!')}
             </h2>
             <p className="text-xs sm:text-sm text-stone-300 mt-1">
               Order <strong className="font-mono text-amber-400">{order.orderId}</strong> • Paid via <span className="text-emerald-400 font-semibold">{order.paymentMethod}</span>
@@ -107,7 +109,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
                   }`}
                 >
                   <Bike className="w-3.5 h-3.5" />
-                  <span>Live Tracking</span>
+                  <span>{t('order_live_tracking', 'Live Tracking')}</span>
                 </button>
 
                 <button
@@ -119,7 +121,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
                   }`}
                 >
                   <Receipt className="w-3.5 h-3.5" />
-                  <span>Digital Receipt</span>
+                  <span>{t('order_digital_receipt', 'Digital Receipt')}</span>
                 </button>
               </div>
             </div>
@@ -168,36 +170,36 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
                   {/* Totals */}
                   <div className="pt-3 border-t border-stone-800 space-y-1.5 text-xs text-stone-400">
                     <div className="flex justify-between">
-                      <span>Subtotal</span>
+                      <span>{t('cart_subtotal', 'Subtotal')}</span>
                       <span className="font-mono text-stone-200">${order.subtotal.toFixed(2)}</span>
                     </div>
 
                     {order.discount > 0 && (
                       <div className="flex justify-between text-emerald-400">
-                        <span>Promo Discount ({order.appliedPromo?.code})</span>
+                        <span>{t('cart_discount', 'Promo Discount')} ({order.appliedPromo?.code})</span>
                         <span className="font-mono">-${order.discount.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between">
-                      <span>Delivery Fee</span>
-                      <span className="font-mono text-stone-200">{order.deliveryFee === 0 ? 'FREE' : `$${order.deliveryFee.toFixed(2)}`}</span>
+                      <span>{t('cart_delivery_fee', 'Delivery Fee')}</span>
+                      <span className="font-mono text-stone-200">{order.deliveryFee === 0 ? t('cart_free_delivery', 'FREE') : `$${order.deliveryFee.toFixed(2)}`}</span>
                     </div>
 
                     <div className="flex justify-between">
-                      <span>Tax</span>
+                      <span>{t('cart_tax', 'Estimated Tax')}</span>
                       <span className="font-mono text-stone-200">${order.tax.toFixed(2)}</span>
                     </div>
 
                     {order.tip > 0 && (
                       <div className="flex justify-between">
-                        <span>Driver Tip</span>
+                        <span>{t('cart_tip', 'Courier Tip')}</span>
                         <span className="font-mono text-stone-200">${order.tip.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
-                      <span className="font-bold text-sm">Paid Total</span>
+                      <span className="font-bold text-sm">{t('cart_total', 'Estimated Total')}</span>
                       <span className="font-mono font-black text-xl text-amber-400">
                         ${order.total.toFixed(2)}
                       </span>
@@ -226,7 +228,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
           {/* Footer Action Button */}
           <div className="p-4 bg-stone-950 border-t border-stone-800 flex items-center justify-between gap-4">
             <span className="text-xs text-stone-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" /> Guaranteed 100% hot & fresh arrival
+              <ShieldCheck className="w-4 h-4 text-emerald-400" /> {t('order_safe_arrival', 'Guaranteed 100% hot & fresh arrival')}
             </span>
 
             <button
@@ -234,7 +236,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
               className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>Continue Browsing</span>
+              <span>{t('order_continue_browsing', 'Continue Browsing')}</span>
             </button>
           </div>
 
