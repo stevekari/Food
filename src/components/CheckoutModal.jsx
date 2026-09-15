@@ -92,7 +92,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto">
         
         {/* Backdrop */}
         <motion.div
@@ -103,17 +103,19 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
           className="fixed inset-0 bg-stone-950/85 backdrop-blur-md"
         />
 
-        {/* Checkout Modal Window */}
+        {/* Checkout Modal / Bottom Sheet Window */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 280 }}
-          className="relative w-full max-w-4xl bg-stone-900 border border-stone-800 rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[92vh] flex flex-col"
+          exit={{ opacity: 0, scale: 0.95, y: 40 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          className="relative w-full max-w-4xl bg-stone-900 border-t sm:border border-stone-800 rounded-t-[32px] sm:rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[94vh] sm:max-h-[92vh] flex flex-col"
         >
+          {/* Mobile Drag Indicator */}
+          <div className="w-12 h-1.5 bg-stone-700/80 rounded-full mx-auto mt-2.5 mb-0.5 sm:hidden shrink-0" />
           
           {/* Top Bar */}
-          <div className="p-5 sm:p-6 border-b border-stone-800 bg-stone-950/70 flex items-center justify-between">
+          <div className="p-4 sm:p-6 border-b border-stone-800 bg-stone-950/70 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-stone-950">
                 <Lock className="w-5 h-5 stroke-[2.5]" />

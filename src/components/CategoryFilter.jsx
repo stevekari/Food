@@ -35,8 +35,8 @@ export default function CategoryFilter({
   return (
     <div className="w-full mb-10">
       
-      {/* Category Pills Bar (Horizontal Scrollable) */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 no-scrollbar scroll-smooth">
+      {/* Category Pills Bar (Horizontal Scrollable with Touch Snapping) */}
+      <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto pb-4 pt-1 no-scrollbar scroll-smooth snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
         {CATEGORIES.map((cat) => {
           const IconComponent = ICONS_MAP[cat.icon] || Sparkles;
           const isSelected = selectedCategory === cat.id;
@@ -45,7 +45,7 @@ export default function CategoryFilter({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`relative flex-shrink-0 flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
+              className={`relative flex-shrink-0 snap-start flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300 active:scale-95 ${
                 isSelected
                   ? 'text-stone-950 font-bold shadow-lg shadow-amber-500/20'
                   : 'bg-stone-900/80 hover:bg-stone-850 text-stone-300 hover:text-white border border-stone-800'

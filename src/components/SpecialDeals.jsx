@@ -16,7 +16,7 @@ export default function SpecialDeals() {
   };
 
   return (
-    <section className="py-12 border-y border-stone-800/80 bg-stone-950/40 relative overflow-hidden">
+    <section id="deals" className="py-12 border-y border-stone-800/80 bg-stone-950/40 relative overflow-hidden">
       {/* Background Subtle Accent */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 

@@ -23,6 +23,7 @@ import { usePWA } from './hooks/usePWA';
 import InstallPwaModal from './components/InstallPwaModal';
 import PwaInstallBanner from './components/PwaInstallBanner';
 import OfflineToast from './components/OfflineToast';
+import MobileBottomNav from './components/MobileBottomNav';
 
 function MainApp() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,9 +52,17 @@ function MainApp() {
   const [isOrderSuccessOpen, setIsOrderSuccessOpen] = useState(false);
 
   const menuSectionRef = useRef(null);
+  const dealsSectionRef = useRef(null);
 
   const scrollToMenu = () => {
     menuSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToDeals = () => {
+    const dealsEl = document.getElementById('deals');
+    if (dealsEl) {
+      dealsEl.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Filter & Sort Food Items
@@ -103,7 +112,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-black pb-20 md:pb-0">
       
       {/* Sticky Navigation Bar */}
       <Navbar
@@ -243,6 +252,16 @@ function MainApp() {
         isOnline={isOnline}
         isUpdateAvailable={isUpdateAvailable}
         onUpdateApp={updateApp}
+      />
+
+      {/* Mobile App Dock / Bottom Navigation Bar */}
+      <MobileBottomNav
+        onExploreClick={scrollToMenu}
+        onSearchClick={scrollToMenu}
+        onDealsClick={scrollToDeals}
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
+        isInstallable={isInstallable}
+        isInstalled={isInstalled}
       />
 
     </div>

@@ -53,7 +53,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto">
         
         {/* Backdrop */}
         <motion.div
@@ -64,16 +64,19 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
           className="fixed inset-0 bg-stone-950/85 backdrop-blur-md"
         />
 
-        {/* Modal Content */}
+        {/* Modal / Bottom Sheet Content */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 30 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 280 }}
-          className="relative w-full max-w-2xl bg-stone-900 border border-stone-800 rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[92vh] flex flex-col"
+          exit={{ opacity: 0, scale: 0.95, y: 40 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          className="relative w-full max-w-2xl bg-stone-900 border-t sm:border border-stone-800 rounded-t-[32px] sm:rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[94vh] sm:max-h-[92vh] flex flex-col"
         >
+          {/* Mobile Drag Indicator */}
+          <div className="w-12 h-1.5 bg-stone-700/80 rounded-full mx-auto mt-2.5 mb-0.5 sm:hidden shrink-0" />
+
           {/* Header Banner */}
-          <div className="p-6 bg-gradient-to-r from-emerald-950/80 via-stone-950 to-stone-950 border-b border-stone-800 text-center relative">
+          <div className="p-5 sm:p-6 bg-gradient-to-r from-emerald-950/80 via-stone-950 to-stone-950 border-b border-stone-800 text-center relative">
             <button
               onClick={onClose}
               className="absolute top-4 right-4 p-2 rounded-xl text-stone-400 hover:text-white bg-stone-800/80 transition-colors"

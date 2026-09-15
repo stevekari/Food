@@ -175,14 +175,14 @@ export default function Hero({ onExploreClick }) {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="absolute -top-6 -right-4 sm:-right-8 p-3.5 rounded-2xl glass-panel-glow border border-amber-500/40 shadow-2xl flex items-center gap-3 animate-float"
+              className="absolute -top-4 sm:-top-6 right-2 sm:-right-8 p-2.5 sm:p-3.5 rounded-2xl glass-panel-glow border border-amber-500/40 shadow-2xl flex items-center gap-2.5 sm:gap-3 animate-float max-w-[85%] sm:max-w-none"
             >
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <Clock className="w-5 h-5" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <div className="text-[10px] uppercase font-bold text-emerald-400 tracking-wide">Hot & Fresh</div>
-                <div className="text-sm font-bold text-white">Estimated 18 Mins</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-emerald-400 tracking-wide">Hot & Fresh</div>
+                <div className="text-xs sm:text-sm font-bold text-white">Estimated 18 Mins</div>
               </div>
             </motion.div>
 
@@ -191,15 +191,15 @@ export default function Hero({ onExploreClick }) {
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="absolute -bottom-6 -left-4 sm:-left-8 p-3.5 rounded-2xl glass-panel border border-stone-700/80 shadow-2xl flex items-center gap-3 animate-float-reverse"
+              className="absolute -bottom-4 sm:-bottom-6 left-2 sm:-left-8 p-2.5 sm:p-3.5 rounded-2xl glass-panel border border-stone-700/80 shadow-2xl flex items-center gap-2.5 sm:gap-3 animate-float-reverse max-w-[85%] sm:max-w-none"
             >
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                <Star className="w-5 h-5 fill-amber-400" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400" />
               </div>
               <div>
-                <div className="text-[10px] uppercase font-bold text-amber-400 tracking-wide">Gourmet Standard</div>
-                <div className="text-sm font-bold text-white flex items-center gap-1">
-                  4.9 / 5.0 (4,200+ orders)
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-amber-400 tracking-wide">Gourmet Standard</div>
+                <div className="text-xs sm:text-sm font-bold text-white flex items-center gap-1">
+                  4.9 / 5.0 (4.2k+ orders)
                 </div>
               </div>
             </motion.div>

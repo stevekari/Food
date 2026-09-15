@@ -26,7 +26,7 @@ export default function InstallPwaModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -36,14 +36,16 @@ export default function InstallPwaModal({
           className="fixed inset-0 bg-black/80 backdrop-blur-md"
         />
 
-        {/* Modal Container */}
+        {/* Modal / Bottom Sheet Container */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-lg bg-stone-900 border border-stone-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 overflow-hidden text-stone-100 z-10"
+          exit={{ opacity: 0, scale: 0.95, y: 40 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          className="relative w-full max-w-lg bg-stone-900 border-t sm:border border-stone-800 rounded-t-[32px] sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 overflow-hidden text-stone-100 z-10 max-h-[92vh] flex flex-col"
         >
+          {/* Mobile Drag Indicator */}
+          <div className="w-12 h-1.5 bg-stone-700/80 rounded-full mx-auto -mt-2 mb-3 sm:hidden shrink-0" />
           {/* Ambient Glows */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />

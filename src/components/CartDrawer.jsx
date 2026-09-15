@@ -67,7 +67,7 @@ export default function CartDrawer({ onCheckoutClick }) {
           />
 
           {/* Drawer Container */}
-          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+          <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -327,7 +327,7 @@ export default function CartDrawer({ onCheckoutClick }) {
 
               {/* Drawer Footer: Order Summary & Checkout Trigger */}
               {items.length > 0 && (
-                <div className="p-5 border-t border-stone-800 bg-stone-950 space-y-3">
+                <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom,1.25rem))] border-t border-stone-800 bg-stone-950 space-y-3">
                   
                   {/* Cost Breakdown */}
                   <div className="space-y-1.5 text-xs text-stone-400">

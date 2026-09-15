@@ -11,11 +11,7 @@
   "theme_color": "#0c0a09",
   "lang": "en",
   "dir": "ltr",
-  "categories": [
-    "food",
-    "shopping",
-    "lifestyle"
-  ],
+  "categories": ["food", "shopping", "lifestyle"],
   "icons": [
     {
       "src": "/pwa-192x192.png",

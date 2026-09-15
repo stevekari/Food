@@ -54,7 +54,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto">
         
         {/* Backdrop */}
         <motion.div
@@ -65,14 +65,17 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
           className="fixed inset-0 bg-stone-950/80 backdrop-blur-md"
         />
 
-        {/* Modal Window */}
+        {/* Modal / Bottom Sheet Window */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-2xl bg-stone-900 border border-stone-800 rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[90vh] flex flex-col"
+          exit={{ opacity: 0, scale: 0.95, y: 40 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+          className="relative w-full max-w-2xl bg-stone-900 border-t sm:border border-stone-800 rounded-t-[32px] sm:rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[92vh] sm:max-h-[90vh] flex flex-col"
         >
+          {/* Mobile Sheet Drag Handle Indicator */}
+          <div className="w-12 h-1.5 bg-stone-700/80 rounded-full mx-auto mt-2.5 mb-0.5 sm:hidden shrink-0" />
+
           {/* Close & Favorite Top Floating Buttons */}
           <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
             <button
@@ -235,7 +238,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
           </div>
 
           {/* Sticky Bottom Action Bar */}
-          <div className="p-4 sm:p-5 bg-stone-950 border-t border-stone-800 flex items-center justify-between gap-4">
+          <div className="p-4 sm:p-5 pb-[max(1rem,env(safe-area-inset-bottom,1rem))] bg-stone-950 border-t border-stone-800 flex items-center justify-between gap-4">
             
             {/* Quantity Stepper */}
             <div className="flex items-center gap-3 bg-stone-900 border border-stone-800 px-3 py-2 rounded-2xl">

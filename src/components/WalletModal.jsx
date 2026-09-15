@@ -45,7 +45,7 @@ export default function WalletModal() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto">
         
         {/* Backdrop */}
         <motion.div
@@ -56,17 +56,19 @@ export default function WalletModal() {
           className="fixed inset-0 bg-stone-950/85 backdrop-blur-md"
         />
 
-        {/* Modal Box */}
+        {/* Modal / Bottom Sheet Box */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.93, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.93, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-2xl bg-stone-900 border border-stone-800 rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[90vh] flex flex-col"
+          exit={{ opacity: 0, scale: 0.95, y: 40 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          className="relative w-full max-w-2xl bg-stone-900 border-t sm:border border-stone-800 rounded-t-[32px] sm:rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[92vh] sm:max-h-[90vh] flex flex-col"
         >
+          {/* Mobile Drag Indicator */}
+          <div className="w-12 h-1.5 bg-stone-700/80 rounded-full mx-auto mt-2.5 mb-0.5 sm:hidden shrink-0" />
           
           {/* Header with Balance Card */}
-          <div className="p-6 bg-gradient-to-br from-amber-950/60 via-stone-950 to-stone-950 border-b border-stone-800 relative">
+          <div className="p-5 sm:p-6 bg-gradient-to-br from-amber-950/60 via-stone-950 to-stone-950 border-b border-stone-800 relative">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
