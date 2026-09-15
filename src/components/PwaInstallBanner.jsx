@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Sparkles, X, Smartphone, ChefHat } from 'lucide-react';
+import logoImg from '../assets/kar.png';
 
 export default function PwaInstallBanner({ isInstallable, isInstalled, onOpenModal }) {
   const [isDismissed, setIsDismissed] = useState(false);
@@ -33,8 +34,8 @@ export default function PwaInstallBanner({ isInstallable, isInstalled, onOpenMod
         <div className="p-3.5 sm:p-4 rounded-2xl bg-stone-900/95 backdrop-blur-xl border border-amber-500/40 shadow-2xl shadow-black/80 flex items-center justify-between gap-3 text-stone-100">
           
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 flex items-center justify-center text-stone-950 shrink-0 shadow-md shadow-orange-500/20">
-              <ChefHat className="w-5 h-5 stroke-[2.5]" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md border border-amber-500/30 bg-stone-900 flex items-center justify-center shrink-0">
+              <img src={logoImg} alt="STEVE FOOD Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-white flex items-center gap-1">

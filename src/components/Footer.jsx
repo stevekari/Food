@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChefHat, Heart, ShieldCheck, Clock, Sparkles, Send, Instagram, Twitter, Facebook } from 'lucide-react';
+import logoImg from '../assets/kar.png';
 
 export default function Footer() {
   return (
@@ -10,8 +11,8 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 flex items-center justify-center text-stone-950">
-                <ChefHat className="w-5 h-5 stroke-[2.5]" />
+              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md border border-amber-500/30 bg-stone-900 flex items-center justify-center">
+                <img src={logoImg} alt="STEVE FOOD Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-display font-bold text-xl text-white tracking-tight">
                 STEVE <span className="text-amber-400">FOOD</span>

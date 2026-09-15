@@ -14,6 +14,7 @@ import {
   Monitor,
   Laptop
 } from 'lucide-react';
+import logoImg from '../assets/kar.png';
 
 export default function InstallPwaModal({ 
   isOpen, 
@@ -60,8 +61,8 @@ export default function InstallPwaModal({
 
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 flex items-center justify-center text-stone-950 shadow-lg shadow-orange-500/30">
-              <ChefHat className="w-8 h-8 stroke-[2.5]" />
+            <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-lg shadow-amber-500/20 border border-amber-500/30 bg-stone-900 flex items-center justify-center shrink-0">
+              <img src={logoImg} alt="STEVE FOOD Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 text-[10px] font-bold uppercase tracking-wider mb-1">
