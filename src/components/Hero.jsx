@@ -4,18 +4,16 @@ import {
   Sparkles, 
   Flame, 
   ArrowRight, 
-  Wallet, 
+  CreditCard, 
   Star, 
   Clock, 
   ShieldCheck, 
   BadgePercent,
-  CheckCircle2
+  Tag
 } from 'lucide-react';
-import { useWallet } from '../context/WalletContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Hero({ onExploreClick }) {
-  const { balance, setIsWalletModalOpen } = useWallet();
   const { t } = useLanguage();
 
   return (
@@ -63,34 +61,34 @@ export default function Hero({ onExploreClick }) {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-4 sm:mt-6 text-sm sm:text-lg text-stone-300 max-w-xl leading-relaxed"
             >
-              {t('hero_subtitle', 'Indulge in award-winning smash burgers, 48h fermented sourdough pizzas, and vibrant poke bowls crafted by master chefs. Instant checkout with your pre-loaded Food Credit wallet.')}
+              {t('hero_subtitle', 'Indulge in award-winning smash burgers, 48h fermented sourdough pizzas, and vibrant poke bowls crafted by master chefs. Instant checkout with direct credit card payment.')}
             </motion.p>
 
-            {/* Credit Wallet Callout Banner */}
+            {/* Direct Card Checkout Trust Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.25 }}
-              onClick={() => setIsWalletModalOpen(true)}
-              className="mt-5 sm:mt-6 w-full max-w-lg p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-stone-900/90 via-amber-950/40 to-stone-900/90 border border-amber-500/40 flex items-center justify-between gap-3 cursor-pointer hover:border-amber-400 transition-all shadow-xl group"
+              onClick={onExploreClick}
+              className="mt-5 sm:mt-6 w-full max-w-lg p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-stone-900/90 via-amber-950/30 to-stone-900/90 border border-amber-500/30 flex items-center justify-between gap-3 cursor-pointer hover:border-amber-400 transition-all shadow-xl group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                  <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                  <CreditCard className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[11px] sm:text-xs text-stone-400 font-medium">{t('hero_wallet_title', 'Your Active Credit Balance')}</div>
-                  <div className="text-sm sm:text-base font-bold text-white font-mono flex items-center gap-2">
-                    €{balance.toFixed(2)} EUR
-                    <span className="text-[10px] sm:text-[11px] font-sans font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">
-                      {t('hero_ready_to_spend', 'Ready to spend')}
-                    </span>
+                  <div className="text-[11px] sm:text-xs text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Direct Card & 1-Touch Checkout</span>
+                  </div>
+                  <div className="text-xs sm:text-sm font-semibold text-white mt-0.5">
+                    Pay when you order • 100% Encrypted & Safe
                   </div>
                 </div>
               </div>
 
-              <span className="text-xs font-semibold text-amber-400 group-hover:text-amber-300 flex items-center gap-1 shrink-0">
-                {t('hero_top_up', 'Top Up')} <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <span className="text-xs font-bold text-amber-400 group-hover:text-amber-300 flex items-center gap-1 shrink-0">
+                Order Now <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </span>
             </motion.div>
 
@@ -103,18 +101,21 @@ export default function Hero({ onExploreClick }) {
             >
               <button
                 onClick={onExploreClick}
-                className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 text-stone-950 font-bold text-sm sm:text-base shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 text-stone-950 font-bold text-sm sm:text-base shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <span>{t('hero_explore_btn', 'Explore Full Menu')}</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </button>
 
               <button
-                onClick={() => setIsWalletModalOpen(true)}
-                className="px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl bg-stone-900/80 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-stone-500 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2.5"
+                onClick={() => {
+                  const el = document.getElementById('deals');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl bg-stone-900/80 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-stone-500 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2.5 cursor-pointer"
               >
-                <Wallet className="w-4 h-4 text-amber-400" />
-                <span>{t('hero_manage_credits', 'Manage Credits')}</span>
+                <Tag className="w-4 h-4 text-orange-400" />
+                <span>Today's Offers & Deals</span>
               </button>
             </motion.div>
 

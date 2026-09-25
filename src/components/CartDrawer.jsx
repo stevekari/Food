@@ -14,10 +14,10 @@ import {
   Bike, 
   Zap, 
   HeartHandshake,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useWallet } from '../context/WalletContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function CartDrawer({ onCheckoutClick }) {
@@ -46,7 +46,6 @@ export default function CartDrawer({ onCheckoutClick }) {
     isFreeDeliveryEligible
   } = useCart();
 
-  const { balance } = useWallet();
   const { t } = useLanguage();
 
   const handleApplyPromo = (e) => {
@@ -376,18 +375,13 @@ export default function CartDrawer({ onCheckoutClick }) {
                     </div>
                   </div>
 
-                  {/* Wallet Credit Availability Notice */}
-                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between text-xs">
-                    <span className="text-stone-300">{t('cart_wallet_credit', 'Wallet Credit:')} <strong className="text-amber-400 font-mono">€{balance.toFixed(2)}</strong></span>
-                    {balance >= total ? (
-                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                        <Check className="w-3.5 h-3.5" /> {t('cart_covered_credit', 'Covered with Credit')}
-                      </span>
-                    ) : (
-                      <span className="text-amber-400 font-semibold">
-                        {t('cart_partial_credit', 'Partial or Card Pay')}
-                      </span>
-                    )}
+                  {/* Secure Direct Checkout Notice */}
+                  <div className="p-2.5 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-between text-xs text-stone-300">
+                    <div className="flex items-center gap-1.5 text-stone-300">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>Direct Card & 1-Touch Checkout</span>
+                    </div>
+                    <span className="text-[11px] text-emerald-400 font-medium">100% Secure</span>
                   </div>
 
                   {/* Checkout CTA Button */}

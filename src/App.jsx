@@ -4,7 +4,6 @@ import { Sparkles, UtensilsCrossed, Search, Flame, ArrowUp } from 'lucide-react'
 import { FOOD_ITEMS } from './data/foodData';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
-import { WalletProvider, useWallet } from './context/WalletContext';
 import { CartProvider, useCart } from './context/CartContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
@@ -16,7 +15,6 @@ import FoodCard from './components/FoodCard';
 import FoodDetailModal from './components/FoodDetailModal';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
-import WalletModal from './components/WalletModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import CustomerReviews from './components/CustomerReviews';
 import Footer from './components/Footer';
@@ -296,8 +294,6 @@ function MainApp() {
         onOrderSuccess={handleOrderSuccess}
       />
 
-      <WalletModal />
-
       <OrderSuccessModal
         order={placedOrder}
         isOpen={isOrderSuccessOpen}
@@ -346,11 +342,9 @@ export default function App() {
     <LanguageProvider>
       <ToastProvider>
         <AuthProvider>
-          <WalletProvider>
-            <CartProvider>
-              <MainApp />
-            </CartProvider>
-          </WalletProvider>
+          <CartProvider>
+            <MainApp />
+          </CartProvider>
         </AuthProvider>
       </ToastProvider>
     </LanguageProvider>

@@ -2,26 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
-  Wallet, 
   CreditCard, 
   Smartphone, 
   Banknote, 
   MapPin, 
   Phone, 
-  Clock, 
   ShieldCheck, 
   CheckCircle2, 
   AlertCircle, 
-  ArrowRight, 
-  Sparkles, 
-  PlusCircle,
-  Lock,
-  ChevronRight,
-  User,
+  Lock, 
+  User, 
   Mail
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useWallet } from '../context/WalletContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -50,19 +43,114 @@ function GoogleIcon({ className = "w-4 h-4" }) {
   );
 }
 
+// Card brand detection helper
+function detectCardBrand(number) {
+  const clean = (number || '').replace(/\D/g, '');
+  if (/^4/.test(clean)) {
+    return { name: 'Visa', brand: 'visa', maxDigits: 16, cvvLength: 3, mask: '4-4-4-4', color: 'from-blue-900 via-indigo-950 to-stone-900' };
+  }
+  if (/^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[01]|2720)/.test(clean)) {
+    return { name: 'Mastercard', brand: 'mastercard', maxDigits: 16, cvvLength: 3, mask: '4-4-4-4', color: 'from-red-950 via-stone-900 to-amber-950' };
+  }
+  if (/^3[47]/.test(clean)) {
+    return { name: 'American Express', brand: 'amex', maxDigits: 15, cvvLength: 4, mask: '4-6-5', color: 'from-slate-800 via-cyan-950 to-stone-900' };
+  }
+  if (/^(6011|65|64[4-9])/.test(clean)) {
+    return { name: 'Discover', brand: 'discover', maxDigits: 16, cvvLength: 3, mask: '4-4-4-4', color: 'from-orange-950 via-stone-900 to-amber-900' };
+  }
+  return { name: 'Credit / Debit', brand: 'generic', maxDigits: 16, cvvLength: 3, mask: '4-4-4-4', color: 'from-stone-900 via-zinc-900 to-stone-950' };
+}
+
+// Luhn Algorithm Card Validator
+function checkLuhn(cardNum) {
+  const digits = (cardNum || '').replace(/\D/g, '');
+  if (digits.length < 13 || digits.length > 19) return false;
+  let sum = 0;
+  let alternate = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let n = parseInt(digits.charAt(i), 10);
+    if (alternate) {
+      n *= 2;
+      if (n > 9) n -= 9;
+    }
+    sum += n;
+    alternate = !alternate;
+  }
+  return sum % 10 === 0;
+}
+
+// Auto format card number with spaces
+function formatCardNumber(value, brandInfo) {
+  const digits = value.replace(/\D/g, '').slice(0, brandInfo.maxDigits);
+  if (brandInfo.brand === 'amex') {
+    const p1 = digits.substring(0, 4);
+    const p2 = digits.substring(4, 10);
+    const p3 = digits.substring(10, 15);
+    return [p1, p2, p3].filter(Boolean).join(' ');
+  }
+  const parts = digits.match(/.{1,4}/g) || [];
+  return parts.join(' ');
+}
+
+// Auto format expiry MM/YY
+function formatExpiry(value) {
+  const clean = value.replace(/\D/g, '').slice(0, 4);
+  if (clean.length === 0) return '';
+  if (clean.length === 1) {
+    if (parseInt(clean, 10) > 1) return `0${clean}/`;
+    return clean;
+  }
+  const month = clean.substring(0, 2);
+  const year = clean.substring(2, 4);
+  let mNum = parseInt(month, 10);
+  if (mNum > 12) mNum = 12;
+  if (mNum === 0) mNum = 1;
+  const formattedMonth = mNum < 10 ? `0${mNum}` : `${mNum}`;
+  return year ? `${formattedMonth}/${year}` : `${formattedMonth}/`;
+}
+
+// Validate Expiry Date
+function validateExpiry(expiryStr) {
+  if (!expiryStr || expiryStr.length < 5) return 'format';
+  const [mmStr, yyStr] = expiryStr.split('/');
+  const mm = parseInt(mmStr, 10);
+  const yy = parseInt(yyStr, 10);
+  if (isNaN(mm) || isNaN(yy) || mm < 1 || mm > 12) return 'format';
+  
+  const now = new Date();
+  const currentYear = now.getFullYear() % 100;
+  const currentMonth = now.getMonth() + 1;
+
+  if (yy < currentYear || (yy === currentYear && mm < currentMonth)) {
+    return 'past';
+  }
+  return null;
+}
+
 export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
   const { items, subtotal, discount, deliveryFee, tax, tip, total, appliedPromo, deliveryAddress, setDeliveryAddress, deliveryType, clearCart } = useCart();
-  const { balance, deductCredit, setIsWalletModalOpen } = useWallet();
   const { addToast } = useToast();
   const { t } = useLanguage();
   const { user, loginWithGoogle } = useAuth();
 
-  const [customerName, setCustomerName] = useState(user?.displayName || 'Stephen Karikari');
-  const [customerEmail, setCustomerEmail] = useState(user?.email || 'stephen@example.com');
-  const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'card' | 'apple' | 'cash'
+  const [customerName, setCustomerName] = useState(user?.displayName || '');
+  const [customerEmail, setCustomerEmail] = useState(user?.email || '');
+  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'apple' | 'cash'
   const [phoneNumber, setPhoneNumber] = useState('+34 612 345 678');
   const [dropoffNotes, setDropoffNotes] = useState('Piso 2º 1ª, código portero #4012, dejar en la puerta');
   
+  // Card Details State - Blank initially for client entry
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardHolder, setCardHolder] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [isCardFlipped, setIsCardFlipped] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Field validation & touch states
+  const [cardErrors, setCardErrors] = useState({ number: '', holder: '', expiry: '', cvv: '' });
+  const [cardTouched, setCardTouched] = useState({ number: false, holder: false, expiry: false, cvv: false });
+
   // Update customer info automatically when user logs in with Google
   useEffect(() => {
     if (user) {
@@ -71,13 +159,84 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
     }
   }, [user]);
 
-  // Card Details State for 3D Card Simulation
-  const [cardNumber, setCardNumber] = useState('4532 8920 1142 6790');
-  const [cardHolder, setCardHolder] = useState(user?.displayName?.toUpperCase() || 'STEPHEN KARIKARI');
-  const [cardExpiry, setCardExpiry] = useState('08/28');
-  const [cardCvv, setCardCvv] = useState('883');
-  const [isCardFlipped, setIsCardFlipped] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  // Detected brand info based on entered number
+  const brandInfo = detectCardBrand(cardNumber);
+
+  // Real-time Card Validation Routine
+  const validateCardField = (field, value) => {
+    let error = '';
+    const cleanDigits = (value || '').replace(/\D/g, '');
+
+    if (field === 'number') {
+      if (!cleanDigits) {
+        error = t('card_err_number_required', 'Card number is required.');
+      } else if (cleanDigits.length < (brandInfo.brand === 'amex' ? 15 : 15)) {
+        error = t('card_err_number_short', 'Card number is incomplete. Please enter 15 or 16 digits.');
+      } else if (!checkLuhn(cleanDigits)) {
+        error = t('card_err_number_invalid', 'Invalid card number. Please check the digits on your card.');
+      }
+    } else if (field === 'holder') {
+      const trimmed = (value || '').trim();
+      if (!trimmed) {
+        error = t('card_err_holder_required', 'Cardholder name is required.');
+      } else if (trimmed.length < 2) {
+        error = t('card_err_holder_short', 'Please enter the full cardholder name as printed on the card.');
+      }
+    } else if (field === 'expiry') {
+      if (!value) {
+        error = t('card_err_expiry_required', 'Expiration date is required (MM/YY).');
+      } else {
+        const expResult = validateExpiry(value);
+        if (expResult === 'format') {
+          error = t('card_err_expiry_format', 'Invalid date format. Use MM/YY (e.g. 08/28).');
+        } else if (expResult === 'past') {
+          error = t('card_err_expiry_past', 'This card has expired. Please use a valid card.');
+        }
+      }
+    } else if (field === 'cvv') {
+      if (!cleanDigits) {
+        error = t('card_err_cvv_required', 'CVV security code is required.');
+      } else if (cleanDigits.length < brandInfo.cvvLength) {
+        error = t('card_err_cvv_invalid', `CVV must be ${brandInfo.cvvLength} digits.`);
+      }
+    }
+
+    setCardErrors((prev) => ({ ...prev, [field]: error }));
+    return error;
+  };
+
+  // Card input handlers
+  const handleCardNumberChange = (e) => {
+    const formatted = formatCardNumber(e.target.value, detectCardBrand(e.target.value));
+    setCardNumber(formatted);
+    if (cardTouched.number) {
+      validateCardField('number', formatted);
+    }
+  };
+
+  const handleCardHolderChange = (e) => {
+    const val = e.target.value;
+    setCardHolder(val);
+    if (cardTouched.holder) {
+      validateCardField('holder', val);
+    }
+  };
+
+  const handleExpiryChange = (e) => {
+    const formatted = formatExpiry(e.target.value);
+    setCardExpiry(formatted);
+    if (cardTouched.expiry) {
+      validateCardField('expiry', formatted);
+    }
+  };
+
+  const handleCvvChange = (e) => {
+    const clean = e.target.value.replace(/\D/g, '').slice(0, brandInfo.cvvLength);
+    setCardCvv(clean);
+    if (cardTouched.cvv) {
+      validateCardField('cvv', clean);
+    }
+  };
 
   // Log begin_checkout event when Checkout modal is opened
   useEffect(() => {
@@ -104,25 +263,54 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
       return;
     }
 
-    setIsProcessing(true);
-
-    // Simulate processing latency for realism
-    await new Promise((res) => setTimeout(res, 900));
-
-    const orderId = `ORD-${Date.now().toString().slice(-8)}`;
-
-    if (paymentMethod === 'wallet') {
-      const success = deductCredit(total, orderId);
-      if (!success) {
-        setIsProcessing(false);
-        return;
+    // 1. STRICT REQUIREMENT: User must be registered / logged in with Google to pay
+    if (!user) {
+      addToast(t('auth_login_required', 'Please sign in or register with Google to complete your payment.'), 'warning');
+      setIsProcessing(true);
+      const loggedInUser = await loginWithGoogle();
+      setIsProcessing(false);
+      if (!loggedInUser) {
+        return; // Stopped because login was not completed
       }
     }
 
+    // 2. STRICT CARD VALIDATION when paying with Credit/Debit Card
+    if (paymentMethod === 'card') {
+      setCardTouched({ number: true, holder: true, expiry: true, cvv: true });
+      const numErr = validateCardField('number', cardNumber);
+      const holderErr = validateCardField('holder', cardHolder);
+      const expErr = validateCardField('expiry', cardExpiry);
+      const cvvErr = validateCardField('cvv', cardCvv);
+
+      if (numErr || holderErr || expErr || cvvErr) {
+        const firstError = numErr || holderErr || expErr || cvvErr;
+        addToast(firstError, 'error');
+        return; // Block submission due to invalid card details
+      }
+    }
+
+
+    // Simulate direct payment authorization
+    await new Promise((res) => setTimeout(res, 900));
+
+    const orderId = `ORD-${Date.now().toString().slice(-8)}`;
+    const cleanDigits = cardNumber.replace(/\D/g, '');
+    const last4 = cleanDigits ? cleanDigits.slice(-4) : '••••';
+
+    const paymentMethodLabel = paymentMethod === 'card' 
+      ? `${brandInfo.name} (••• ${last4}) - Cardholder: ${cardHolder.trim() || 'Client'}` 
+      : paymentMethod === 'apple' 
+      ? 'Apple Pay / Google Pay' 
+      : 'Cash on Delivery';
+
     const orderDetails = {
       orderId,
-      customerName: customerName.trim() || 'Valued Customer',
-      customerEmail: customerEmail.trim() || 'guest@stevefood.com',
+      userId: user?.uid || null,
+      userDisplayName: user?.displayName || customerName || 'Valued Customer',
+      userEmail: user?.email || customerEmail || '',
+      userPhotoURL: user?.photoURL || null,
+      customerName: customerName.trim() || user?.displayName || 'Valued Customer',
+      customerEmail: customerEmail.trim() || user?.email || '',
       items: [...items],
       subtotal,
       discount,
@@ -135,7 +323,10 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
       deliveryType,
       phoneNumber,
       dropoffNotes,
-      paymentMethod: paymentMethod === 'wallet' ? 'Food Credit Wallet' : paymentMethod === 'card' ? 'Credit Card (••• 6790)' : paymentMethod === 'apple' ? 'Apple Pay' : 'Cash on Delivery',
+      paymentMethod: paymentMethodLabel,
+      cardBrand: brandInfo.brand,
+      cardholderName: cardHolder.trim(),
+      cardLast4: last4,
       placedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       estimatedArrival: deliveryType === 'priority' ? '15-20 mins' : '25-35 mins'
     };
@@ -175,9 +366,6 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
     onOrderSuccess(orderDetails);
   };
 
-  const remainingBalanceAfterOrder = +(balance - total).toFixed(2);
-  const hasEnoughCredit = balance >= total;
-
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 overflow-y-auto">
@@ -191,7 +379,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
           className="fixed inset-0 bg-stone-950/85 backdrop-blur-md"
         />
 
-        {/* Checkout Modal / Bottom Sheet Window */}
+        {/* Checkout Modal Window */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -231,66 +419,68 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
             {/* Left Column: Delivery & Payment Options */}
             <div className="lg:col-span-7 space-y-4">
               
-              {/* Google Sign-in Banner / Verified User Status Card */}
+              {/* STEP 1: Google Sign-in / Registration (MANDATORY GATE) */}
               {!user ? (
-                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/5 border border-amber-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-amber-500/5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-md">
-                      <GoogleIcon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <span>{t('auth_sign_in_google', 'Sign in with Google')}</span>
-                        <span className="text-[10px] bg-amber-500/30 text-amber-300 px-1.5 py-0.2 rounded font-semibold">1-Tap</span>
-                      </div>
-                      <div className="text-[11px] text-stone-300 leading-tight">
-                        {t('auth_checkout_prompt', 'Sign in to save your Spain delivery address & sync orders live')}
-                      </div>
-                    </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 border-2 border-amber-500/50 shadow-xl shadow-amber-500/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase font-extrabold text-amber-400 tracking-wider flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-amber-400" />
+                      {t('auth_step_account_required', '1. Account Sign-In (Required to Pay)')}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold bg-amber-500 text-stone-950 px-2 py-0.5 rounded-full">
+                      Mandatory
+                    </span>
                   </div>
+
+                  <p className="text-xs text-stone-300 leading-relaxed">
+                    {t('auth_checkout_prompt', 'Sign in or register with Google (Required to authorize final payment & track order)')}
+                  </p>
+
                   <button
                     type="button"
                     onClick={loginWithGoogle}
-                    className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white hover:bg-stone-100 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 shadow transition-all active:scale-95 shrink-0 cursor-pointer"
+                    className="w-full py-3 px-4 rounded-xl bg-white hover:bg-stone-100 active:scale-[0.99] text-stone-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-black/40 transition-all cursor-pointer border border-stone-200"
                   >
-                    <GoogleIcon className="w-4 h-4" />
+                    <GoogleIcon className="w-5 h-5" />
                     <span>{t('auth_sign_in_google', 'Continue with Google')}</span>
                   </button>
                 </div>
               ) : (
-                <div className="p-3 rounded-2xl bg-stone-950/80 border border-emerald-500/30 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
+                <div className="p-3.5 rounded-2xl bg-stone-950/80 border border-emerald-500/40 flex items-center justify-between gap-3 shadow-md">
+                  <div className="flex items-center gap-3 min-w-0">
                     {user.photoURL ? (
                       <img 
                         src={user.photoURL} 
                         alt="" 
-                        className="w-8 h-8 rounded-full object-cover border border-emerald-400 shrink-0 shadow" 
+                        className="w-9 h-9 rounded-full object-cover border-2 border-emerald-400 shrink-0 shadow" 
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-stone-950 font-bold flex items-center justify-center text-xs shrink-0 shadow">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-stone-950 font-black flex items-center justify-center text-xs shrink-0 shadow">
                         {user.displayName?.charAt(0) || 'U'}
                       </div>
                     )}
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-white truncate">
                         <span>{user.displayName || 'Food Lover'}</span>
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded font-medium border border-emerald-500/20">
-                          <ShieldCheck className="w-3 h-3" /> {t('auth_verified', 'Verified')}
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded font-bold border border-emerald-500/30">
+                          <CheckCircle2 className="w-3 h-3" /> {t('auth_verified', 'Verified Account')}
                         </span>
                       </div>
                       <span className="text-[11px] text-stone-400 truncate">{user.email}</span>
                     </div>
                   </div>
-                  <span className="text-[11px] text-emerald-400 font-mono hidden sm:inline-block">Google Synced</span>
+                  <span className="text-[11px] text-emerald-400 font-mono font-bold hidden sm:inline-block">
+                    Google Connected
+                  </span>
                 </div>
               )}
 
-              {/* Customer & Delivery Information Section */}
+              {/* STEP 2: Customer & Delivery Information Section */}
               <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase font-bold text-stone-400 tracking-wider flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> {t('checkout_step1', '1. Customer & Delivery Information')}
+                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> {t('checkout_step1', '2. Customer & Delivery Information')}
                   </span>
                   <span className="text-[11px] text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">
                     {deliveryType === 'priority' ? 'Priority Express (15-20 min)' : 'Standard (25-35 min)'}
@@ -351,89 +541,13 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 </div>
               </div>
 
-              {/* Payment Method Selector */}
+              {/* STEP 3: Payment Method Selector */}
               <div className="space-y-3">
                 <span className="text-xs uppercase font-bold text-stone-400 tracking-wider">
-                  {t('checkout_step2', '2. Select Payment Method')}
+                  {t('checkout_step2', '3. Select Payment Method')}
                 </span>
 
-                {/* Option 1: FOOD CREDIT WALLET (Recommended) */}
-                <div
-                  onClick={() => setPaymentMethod('wallet')}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
-                    paymentMethod === 'wallet'
-                      ? 'bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/5 border-amber-500 shadow-lg shadow-amber-500/10'
-                      : 'bg-stone-950/60 border-stone-800 hover:border-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
-                        paymentMethod === 'wallet' ? 'border-amber-400 bg-amber-400 text-stone-950' : 'border-stone-600'
-                      }`}>
-                        {paymentMethod === 'wallet' && <div className="w-2 h-2 rounded-full bg-stone-950" />}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                          <Wallet className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-white flex items-center gap-2">
-                            {t('checkout_pay_wallet', 'Food Credit Balance')}
-                            <span className="text-[10px] bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded font-black tracking-wide">
-                              FASTEST
-                            </span>
-                          </div>
-                          <div className="text-xs text-stone-400">
-                            {t('checkout_available_bal', 'Available Credit:')} <strong className="text-amber-400 font-mono">€{balance.toFixed(2)}</strong>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <span className="font-mono text-sm font-extrabold text-amber-400">
-                      €{balance.toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Credit Status Banner when selected */}
-                  {paymentMethod === 'wallet' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="mt-3 pt-3 border-t border-amber-500/20 flex items-center justify-between text-xs"
-                    >
-                      {hasEnoughCredit ? (
-                        <div className="flex items-center gap-2 text-emerald-300">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                          <span>
-                            {t('checkout_sufficient_bal', 'Instant 1-tap checkout. No bank confirmation required.')}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between w-full text-rose-300">
-                          <div className="flex items-center gap-1.5">
-                            <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                            <span>Short by €{(total - balance).toFixed(2)}</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsWalletModalOpen(true);
-                            }}
-                            className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-lg font-bold text-xs flex items-center gap-1 shadow"
-                          >
-                            <PlusCircle className="w-3.5 h-3.5" /> {t('checkout_top_up_btn', 'Top Up Credit')}
-                          </button>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </div>
-
-                {/* Option 2: Credit / Debit Card (Interactive 3D Flipping Card) */}
+                {/* Option 1: Credit / Debit Card (Client Enters Card Details) */}
                 <div
                   onClick={() => setPaymentMethod('card')}
                   className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
@@ -455,7 +569,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                       </div>
                       <div>
                         <div className="text-sm font-bold text-white">{t('checkout_pay_card', 'Credit / Debit Card')}</div>
-                        <div className="text-xs text-stone-400">Visa, Mastercard, Amex</div>
+                        <div className="text-xs text-stone-400">Visa, Mastercard, Amex, Discover</div>
                       </div>
                     </div>
                   </div>
@@ -467,15 +581,14 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                       animate={{ opacity: 1, height: 'auto' }}
                       className="mt-4 space-y-4 pt-3 border-t border-stone-800"
                     >
-                      {/* Stylized 3D Card Preview */}
+                      {/* Stylized 3D Card Preview reflecting client inputs */}
                       <div className="perspective-1000 flex justify-center my-2">
                         <motion.div
                           animate={{ rotateY: isCardFlipped ? 180 : 0 }}
                           transition={{ duration: 0.6 }}
-                          className="relative w-full max-w-[320px] h-48 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden"
+                          className={`relative w-full max-w-[320px] h-48 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden bg-gradient-to-tr ${brandInfo.color}`}
                           style={{
                             transformStyle: 'preserve-3d',
-                            background: 'linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #431407 100%)',
                             border: '1px solid rgba(255, 255, 255, 0.15)'
                           }}
                         >
@@ -483,11 +596,11 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                             // Front of Card
                             <>
                               <div className="flex items-center justify-between">
-                                <span className="font-display text-xs tracking-widest text-amber-300 font-bold uppercase">
-                                  STEVE FOOD VIP
+                                <span className="font-display text-[11px] tracking-widest text-amber-300 font-bold uppercase">
+                                  STEVE FOOD GOURMET
                                 </span>
-                                <span className="font-mono font-black italic text-base text-stone-200">
-                                  VISA
+                                <span className="font-mono font-black italic text-sm tracking-wider text-white bg-white/10 px-2 py-0.5 rounded border border-white/20">
+                                  {brandInfo.name.toUpperCase()}
                                 </span>
                               </div>
 
@@ -496,13 +609,15 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                               </div>
 
                               <div>
-                                <div className="font-mono text-sm tracking-widest text-stone-100 font-bold">
+                                <div className="font-mono text-sm sm:text-base tracking-widest text-stone-100 font-bold drop-shadow">
                                   {cardNumber || '•••• •••• •••• ••••'}
                                 </div>
                                 <div className="flex justify-between items-end mt-2 text-[10px] text-stone-300">
-                                  <div>
+                                  <div className="max-w-[190px] truncate">
                                     <div className="text-[8px] uppercase tracking-wider text-stone-400">Cardholder</div>
-                                    <div className="font-semibold tracking-wide uppercase">{cardHolder || 'YOUR NAME'}</div>
+                                    <div className="font-semibold tracking-wide uppercase truncate">
+                                      {cardHolder || 'FULL NAME ON CARD'}
+                                    </div>
                                   </div>
                                   <div>
                                     <div className="text-[8px] uppercase tracking-wider text-stone-400">Expires</div>
@@ -527,61 +642,143 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                         </motion.div>
                       </div>
 
-                      {/* Inputs */}
-                      <div className="space-y-2.5 text-xs">
+                      {/* Interactive Client Card Inputs */}
+                      <div className="space-y-3 text-xs">
+                        
+                        {/* 1. Cardholder Name Input */}
                         <div>
-                          <label className="block text-stone-400 mb-1">Card Number</label>
+                          <label className="block text-stone-300 font-medium mb-1">
+                            {t('card_holder_label', 'Cardholder Name (as printed on card)')}
+                          </label>
                           <input
                             type="text"
-                            value={cardNumber}
-                            onChange={(e) => setCardNumber(e.target.value)}
-                            maxLength={19}
-                            className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white font-mono focus:border-amber-500 focus:outline-none"
+                            value={cardHolder}
+                            onChange={handleCardHolderChange}
+                            onBlur={() => {
+                              setCardTouched((p) => ({ ...p, holder: true }));
+                              validateCardField('holder', cardHolder);
+                            }}
+                            placeholder={t('card_holder_placeholder', 'e.g. MARIA GARCIA or JOHN SMITH')}
+                            className={`w-full px-3 py-2 bg-stone-900 border rounded-xl text-white focus:outline-none transition-colors ${
+                              cardTouched.holder && cardErrors.holder 
+                                ? 'border-rose-500 focus:border-rose-400 bg-rose-950/20' 
+                                : 'border-stone-800 focus:border-amber-500'
+                            }`}
                           />
+                          {cardTouched.holder && cardErrors.holder && (
+                            <div className="flex items-center gap-1 text-[11px] text-rose-400 mt-1">
+                              <AlertCircle className="w-3 h-3 shrink-0" />
+                              <span>{cardErrors.holder}</span>
+                            </div>
+                          )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="block text-stone-400 mb-1">Cardholder Name</label>
+                        {/* 2. Card Number Input */}
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="text-stone-300 font-medium">
+                              {t('card_number_label', 'Card Number')}
+                            </label>
+                            {cardNumber && (
+                              <span className="text-[10px] text-amber-400 font-semibold uppercase">
+                                {brandInfo.name}
+                              </span>
+                            )}
+                          </div>
+                          <div className="relative">
                             <input
                               type="text"
-                              value={cardHolder}
-                              onChange={(e) => setCardHolder(e.target.value.toUpperCase())}
-                              className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white focus:border-amber-500 focus:outline-none"
+                              value={cardNumber}
+                              onChange={handleCardNumberChange}
+                              onBlur={() => {
+                                setCardTouched((p) => ({ ...p, number: true }));
+                                validateCardField('number', cardNumber);
+                              }}
+                              placeholder={t('card_number_placeholder', '4532 •••• •••• ••••')}
+                              maxLength={19}
+                              className={`w-full px-3 py-2 bg-stone-900 border rounded-xl text-white font-mono focus:outline-none transition-colors ${
+                                cardTouched.number && cardErrors.number 
+                                ? 'border-rose-500 focus:border-rose-400 bg-rose-950/20' 
+                                : 'border-stone-800 focus:border-amber-500'
+                              }`}
                             />
+                            <CreditCard className="w-4 h-4 text-stone-500 absolute right-3 top-2.5" />
                           </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="block text-stone-400 mb-1">Exp Date</label>
-                              <input
-                                type="text"
-                                value={cardExpiry}
-                                onChange={(e) => setCardExpiry(e.target.value)}
-                                placeholder="MM/YY"
-                                maxLength={5}
-                                className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white font-mono focus:border-amber-500 focus:outline-none text-center"
-                              />
+                          {cardTouched.number && cardErrors.number && (
+                            <div className="flex items-center gap-1 text-[11px] text-rose-400 mt-1">
+                              <AlertCircle className="w-3 h-3 shrink-0" />
+                              <span>{cardErrors.number}</span>
                             </div>
-                            <div>
-                              <label className="block text-stone-400 mb-1">CVV</label>
-                              <input
-                                type="password"
-                                value={cardCvv}
-                                onFocus={() => setIsCardFlipped(true)}
-                                onBlur={() => setIsCardFlipped(false)}
-                                onChange={(e) => setCardCvv(e.target.value)}
-                                maxLength={4}
-                                className="w-full px-3 py-2 bg-stone-900 border border-stone-800 rounded-xl text-white font-mono focus:border-amber-500 focus:outline-none text-center"
-                              />
-                            </div>
+                          )}
+                        </div>
+
+                        {/* 3. Expiry Date & CVV */}
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div>
+                            <label className="block text-stone-300 font-medium mb-1">
+                              {t('card_expiry_label', 'Exp Date')}
+                            </label>
+                            <input
+                              type="text"
+                              value={cardExpiry}
+                              onChange={handleExpiryChange}
+                              onBlur={() => {
+                                setCardTouched((p) => ({ ...p, expiry: true }));
+                                validateCardField('expiry', cardExpiry);
+                              }}
+                              placeholder="MM/YY"
+                              maxLength={5}
+                              className={`w-full px-3 py-2 bg-stone-900 border rounded-xl text-white font-mono text-center focus:outline-none transition-colors ${
+                                cardTouched.expiry && cardErrors.expiry 
+                                  ? 'border-rose-500 focus:border-rose-400 bg-rose-950/20' 
+                                  : 'border-stone-800 focus:border-amber-500'
+                              }`}
+                            />
+                            {cardTouched.expiry && cardErrors.expiry && (
+                              <div className="flex items-center gap-1 text-[10px] text-rose-400 mt-1">
+                                <AlertCircle className="w-3 h-3 shrink-0" />
+                                <span>{cardErrors.expiry}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-stone-300 font-medium mb-1">
+                              {t('card_cvv_label', 'CVV')}
+                            </label>
+                            <input
+                              type="password"
+                              value={cardCvv}
+                              onFocus={() => setIsCardFlipped(true)}
+                              onBlur={() => {
+                                setIsCardFlipped(false);
+                                setCardTouched((p) => ({ ...p, cvv: true }));
+                                validateCardField('cvv', cardCvv);
+                              }}
+                              onChange={handleCvvChange}
+                              maxLength={brandInfo.cvvLength}
+                              placeholder={brandInfo.brand === 'amex' ? '1234' : '123'}
+                              className={`w-full px-3 py-2 bg-stone-900 border rounded-xl text-white font-mono text-center focus:outline-none transition-colors ${
+                                cardTouched.cvv && cardErrors.cvv 
+                                  ? 'border-rose-500 focus:border-rose-400 bg-rose-950/20' 
+                                  : 'border-stone-800 focus:border-amber-500'
+                              }`}
+                            />
+                            {cardTouched.cvv && cardErrors.cvv && (
+                              <div className="flex items-center gap-1 text-[10px] text-rose-400 mt-1">
+                                <AlertCircle className="w-3 h-3 shrink-0" />
+                                <span>{cardErrors.cvv}</span>
+                              </div>
+                            )}
                           </div>
                         </div>
+
                       </div>
                     </motion.div>
                   )}
                 </div>
 
-                {/* Option 3: Apple Pay / Google Pay */}
+                {/* Option 2: Apple Pay / Google Pay */}
                 <div
                   onClick={() => setPaymentMethod('apple')}
                   className={`p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-center justify-between ${
@@ -606,7 +803,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                   <span className="text-[11px] text-stone-400">1-Touch Pay</span>
                 </div>
 
-                {/* Option 4: Cash on Delivery */}
+                {/* Option 3: Cash on Delivery */}
                 <div
                   onClick={() => setPaymentMethod('cash')}
                   className={`p-3.5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-center justify-between ${
@@ -635,7 +832,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
 
             </div>
 
-            {/* Right Column: Order Summary & Placement */}
+            {/* Right Column: Order Summary & Final Payment Trigger */}
             <div className="lg:col-span-5 flex flex-col justify-between bg-stone-950/70 p-5 rounded-2xl border border-stone-800 space-y-4">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-stone-300 pb-3 border-b border-stone-800">
@@ -699,40 +896,81 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 </div>
               </div>
 
-              {/* Complete Order Button */}
-              <div className="space-y-2 pt-2">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  disabled={isProcessing || (paymentMethod === 'wallet' && !hasEnoughCredit)}
-                  onClick={handlePlaceOrder}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 disabled:opacity-50 text-stone-950 font-black text-base shadow-xl shadow-orange-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
-                      <span>Authorizing Payment...</span>
-                    </div>
-                  ) : paymentMethod === 'wallet' ? (
-                    hasEnoughCredit ? (
+              {/* Complete Final Payment / Required Auth Action Button */}
+              <div className="space-y-2.5 pt-2">
+                {!user ? (
+                  /* When NOT logged in: Direct Google Registration / Login CTA Button is REQUIRED */
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isProcessing}
+                    onClick={async () => {
+                      setIsProcessing(true);
+                      const loggedIn = await loginWithGoogle();
+                      setIsProcessing(false);
+                      if (loggedIn) {
+                        addToast(t('auth_ready_to_pay', 'Account verified! You can now complete your payment.'), 'success');
+                      }
+                    }}
+                    className="w-full py-4 rounded-2xl bg-white hover:bg-stone-100 text-stone-950 font-black text-sm sm:text-base shadow-xl shadow-white/10 flex items-center justify-center gap-2.5 transition-all cursor-pointer border border-stone-200"
+                  >
+                    {isProcessing ? (
                       <div className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5" />
-                        <span>Pay with Food Credit • €{total.toFixed(2)}</span>
+                        <div className="w-5 h-5 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
+                        <span>Connecting to Google...</span>
                       </div>
                     ) : (
-                      <span>Insufficient Credits</span>
-                    )
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Lock className="w-4 h-4" />
-                      <span>{t('checkout_place_order_btn', 'Place Order')} • €{total.toFixed(2)}</span>
-                    </div>
-                  )}
-                </motion.button>
+                      <>
+                        <GoogleIcon className="w-5 h-5" />
+                        <span>{t('auth_login_to_pay', 'Sign in with Google to Pay')} • €{total.toFixed(2)}</span>
+                      </>
+                    )}
+                  </motion.button>
+                ) : (
+                  /* When LOGGED IN: Authorized Final Payment Button */
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isProcessing}
+                    onClick={handlePlaceOrder}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 disabled:opacity-50 text-stone-950 font-black text-base shadow-xl shadow-orange-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    {isProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
+                        <span>Authorizing Payment...</span>
+                      </div>
+                    ) : paymentMethod === 'card' ? (
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" />
+                        <span>Pay with Credit Card • €{total.toFixed(2)}</span>
+                      </div>
+                    ) : paymentMethod === 'apple' ? (
+                      <div className="flex items-center gap-2">
+                        <Smartphone className="w-5 h-5" />
+                        <span>Pay with Apple / Google Pay • €{total.toFixed(2)}</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Banknote className="w-5 h-5" />
+                        <span>Confirm Cash Order • €{total.toFixed(2)}</span>
+                      </div>
+                    )}
+                  </motion.button>
+                )}
 
-                <p className="text-[10px] text-stone-500 text-center flex items-center justify-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                  Instant order confirmation & live tracking dispatched to kitchen
+                <p className="text-[10px] text-stone-400 text-center flex items-center justify-center gap-1.5 px-2">
+                  {!user ? (
+                    <>
+                      <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span>{t('auth_account_required_note', 'Google login or registration is required for final payment authorization.')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Instant order confirmation & live tracking dispatched to kitchen</span>
+                    </>
+                  )}
                 </p>
               </div>
 
@@ -745,4 +983,3 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
     </AnimatePresence>
   );
 }
-

@@ -4,13 +4,11 @@ import {
   Utensils, 
   Search, 
   ShoppingBag, 
-  Wallet, 
   Tag, 
   Sparkles,
   Download
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useWallet } from '../context/WalletContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function MobileBottomNav({ 
@@ -23,7 +21,6 @@ export default function MobileBottomNav({
   activeTab = 'menu'
 }) {
   const { itemCount, openCart, total } = useCart();
-  const { balance, setIsWalletModalOpen } = useWallet();
   const { t } = useLanguage();
 
   return (
@@ -36,7 +33,7 @@ export default function MobileBottomNav({
         {/* 1. Explore Menu Button */}
         <button
           onClick={onExploreClick}
-          className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all"
+          className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all cursor-pointer"
         >
           <div className="w-8 h-8 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-center text-amber-400">
             <Utensils className="w-4 h-4" />
@@ -47,7 +44,7 @@ export default function MobileBottomNav({
         {/* 2. Deals / Discounts Button */}
         <button
           onClick={onDealsClick}
-          className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all"
+          className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all cursor-pointer"
         >
           <div className="w-8 h-8 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-center text-orange-400">
             <Tag className="w-4 h-4" />
@@ -59,7 +56,7 @@ export default function MobileBottomNav({
         <motion.button
           whileTap={{ scale: 0.92 }}
           onClick={openCart}
-          className="relative -top-2 flex flex-col items-center justify-center group"
+          className="relative -top-2 flex flex-col items-center justify-center group cursor-pointer"
         >
           <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-red-600 text-stone-950 flex items-center justify-center shadow-lg shadow-orange-500/30 border-2 border-stone-950">
             <ShoppingBag className="w-6 h-6 stroke-[2.5]" />
@@ -82,24 +79,22 @@ export default function MobileBottomNav({
           </span>
         </motion.button>
 
-        {/* 4. Food Credits Wallet Button */}
+        {/* 4. Search Dishes Button */}
         <button
-          onClick={() => setIsWalletModalOpen(true)}
-          className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all"
+          onClick={onSearchClick}
+          className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all cursor-pointer"
         >
-          <div className="relative w-8 h-8 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-center text-emerald-400">
-            <Wallet className="w-4 h-4" />
+          <div className="w-8 h-8 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-center text-stone-300">
+            <Search className="w-4 h-4" />
           </div>
-          <span className="text-[10px] font-bold tracking-tight text-stone-300 font-mono">
-            €{balance.toFixed(0)}
-          </span>
+          <span className="text-[10px] font-bold tracking-tight">{t('dock_search', 'Search')}</span>
         </button>
 
-        {/* 5. Install App (or Search) */}
+        {/* 5. Install App (or Express Badge) */}
         {isInstallable && !isInstalled ? (
           <button
             onClick={onOpenInstallModal}
-            className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all"
+            className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all cursor-pointer"
           >
             <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
               <Download className="w-4 h-4 animate-bounce" />
@@ -108,13 +103,13 @@ export default function MobileBottomNav({
           </button>
         ) : (
           <button
-            onClick={onSearchClick}
-            className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all"
+            onClick={onExploreClick}
+            className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-2xl text-stone-400 hover:text-amber-400 active:scale-95 transition-all cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-center text-stone-300">
-              <Search className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-stone-900/80 border border-stone-800 flex items-center justify-center text-emerald-400">
+              <Sparkles className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-bold tracking-tight">{t('dock_search', 'Search')}</span>
+            <span className="text-[10px] font-bold tracking-tight text-emerald-400">Gourmet</span>
           </button>
         )}
 

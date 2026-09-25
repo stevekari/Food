@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingBag, 
-  Wallet, 
-  Plus, 
   Search, 
   Sparkles, 
   Flame, 
@@ -17,7 +15,6 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useWallet } from '../context/WalletContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSelector from './LanguageSelector';
@@ -55,7 +52,6 @@ export default function Navbar({
   isInstalled 
 }) {
   const { itemCount, openCart, total } = useCart();
-  const { balance, setIsWalletModalOpen } = useWallet();
   const { t } = useLanguage();
   const { user, loginWithGoogle, logout } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -243,38 +239,7 @@ export default function Navbar({
               </motion.button>
             )}
 
-            {/* Desktop Food Credit Balance Pill */}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setIsWalletModalOpen(true)}
-              className="hidden sm:flex relative items-center gap-2.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 hover:from-amber-500/25 hover:to-orange-500/20 border border-amber-500/30 hover:border-amber-400/60 transition-all text-left shadow-lg shadow-amber-500/5 group"
-            >
-              <div className="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-stone-950 transition-colors">
-                <Wallet className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase font-bold text-amber-400/90 tracking-wider">
-                  {t('nav_credits', 'Credits')}
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-white font-mono">
-                  €{balance.toFixed(2)}
-                </span>
-              </div>
-              <div className="w-5 h-5 rounded-full bg-stone-800 flex items-center justify-center text-stone-300 group-hover:text-white transition-colors">
-                <Plus className="w-3 h-3" />
-              </div>
-            </motion.button>
 
-            {/* Mobile Compact Food Credit Pill */}
-            <button
-              onClick={() => setIsWalletModalOpen(true)}
-              className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-bold text-xs active:scale-95 transition-transform"
-              title="Food Credits"
-            >
-              <Wallet className="w-3.5 h-3.5 text-amber-400" />
-              <span>€{balance.toFixed(0)}</span>
-            </button>
 
             {/* Desktop Cart Button */}
             <motion.button

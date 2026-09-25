@@ -2,12 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Flame, Gift, Percent, ArrowRight, Zap, Copy, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useWallet } from '../context/WalletContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function SpecialDeals() {
   const { applyPromoCode } = useCart();
-  const { setIsWalletModalOpen } = useWallet();
   const { t } = useLanguage();
   const [copiedCode, setCopiedCode] = React.useState(null);
 
@@ -29,11 +27,11 @@ export default function SpecialDeals() {
               <Sparkles className="w-3.5 h-3.5" /> {t('deals_tag', 'Exclusive Member Perks')}
             </div>
             <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
-              {t('deals_title', 'Limited-Time Food Offers & Credits')}
+              {t('deals_title', 'Limited-Time Food Offers & Discounts')}
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-stone-400 max-w-md mt-2 md:mt-0">
-            {t('deals_subtitle', 'Stack your pre-loaded food credits with flash coupons for maximum culinary delight.')}
+            {t('deals_subtitle', 'Apply flash promo codes at checkout for maximum savings on artisanal delights.')}
           </p>
         </div>
 
@@ -68,7 +66,7 @@ export default function SpecialDeals() {
               </span>
               <button
                 onClick={() => handleCopy('STEVE20')}
-                className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow"
+                className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow cursor-pointer"
               >
                 {copiedCode === 'STEVE20' ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copiedCode === 'STEVE20' ? t('deals_applied', 'Applied!') : t('deals_apply_code', 'Apply Code')}</span>
@@ -76,7 +74,7 @@ export default function SpecialDeals() {
             </div>
           </motion.div>
 
-          {/* Card 2: Wallet Bonus Top-Up */}
+          {/* Card 2: €10 Off Orders Over €30 */}
           <motion.div
             whileHover={{ y: -4 }}
             className="p-6 rounded-3xl bg-gradient-to-br from-stone-900 via-stone-900 to-orange-950/40 border border-orange-500/30 shadow-xl flex flex-col justify-between relative overflow-hidden group"
@@ -89,24 +87,26 @@ export default function SpecialDeals() {
                   <Gift className="w-5 h-5" />
                 </span>
                 <span className="px-2.5 py-1 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-300 font-extrabold text-[10px] uppercase tracking-wider">
-                  Wallet Boost
+                  Feast Discount
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-xl text-white">{t('deals_card2_title', 'Top-Up €50, Get €5 Free')}</h3>
+              <h3 className="font-display font-bold text-xl text-white">{t('deals_card2_title', '€10 Off Orders Over €30')}</h3>
               <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                {t('deals_card2_desc', '10% instant food credit bonus automatically added to your digital wallet balance.')}
+                {t('deals_card2_desc', 'Save €10 on your order when you spend €30 or more on handcrafted dishes.')}
               </p>
             </div>
 
             <div className="mt-6 pt-4 border-t border-stone-800 flex items-center justify-between">
-              <span className="text-xs text-stone-300 font-semibold">VIP Top-Up Special</span>
+              <span className="font-mono font-bold text-sm text-orange-400 bg-stone-950 px-2.5 py-1 rounded-xl border border-orange-500/30">
+                YUMMY10
+              </span>
               <button
-                onClick={() => setIsWalletModalOpen(true)}
-                className="px-3.5 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow"
+                onClick={() => handleCopy('YUMMY10')}
+                className="px-3.5 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-stone-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow cursor-pointer"
               >
-                <span>{t('deals_claim_bonus', 'Claim Bonus')}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                {copiedCode === 'YUMMY10' ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedCode === 'YUMMY10' ? t('deals_applied', 'Applied!') : t('deals_apply_code', 'Apply Code')}</span>
               </button>
             </div>
           </motion.div>
