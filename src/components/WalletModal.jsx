@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { useLanguage } from '../context/LanguageContext';
+import { logAnalyticsEvent } from '../firebase';
 
 const PACKAGES = [
   { id: 'p1', amount: 25, bonus: 0, label: 'Starter Pack', tag: 'Standard' },
@@ -36,10 +37,24 @@ export default function WalletModal() {
     await new Promise((r) => setTimeout(r, 600));
 
     if (customAmount && Number(customAmount) > 0) {
-      topUp(Number(customAmount), 0, 'Instant Top-Up');
+      const amt = Number(customAmount);
+      topUp(amt, 0, 'Instant Top-Up');
+      logAnalyticsEvent('top_up_wallet', {
+        amount: amt,
+        bonus: 0,
+        currency: 'EUR',
+        type: 'custom'
+      });
       setCustomAmount('');
     } else if (selectedPkg) {
       topUp(selectedPkg.amount, selectedPkg.bonus, `${selectedPkg.label} Package`);
+      logAnalyticsEvent('top_up_wallet', {
+        amount: selectedPkg.amount,
+        bonus: selectedPkg.bonus,
+        currency: 'EUR',
+        package_id: selectedPkg.id,
+        type: 'package'
+      });
     }
 
     setIsProcessing(false);

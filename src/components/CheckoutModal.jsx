@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -16,12 +16,15 @@ import {
   Sparkles, 
   PlusCircle,
   Lock,
-  ChevronRight
+  ChevronRight,
+  User,
+  Mail
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWallet } from '../context/WalletContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
+import { saveOrderToFirestore, logAnalyticsEvent } from '../firebase';
 
 export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
   const { items, subtotal, discount, deliveryFee, tax, tip, total, appliedPromo, deliveryAddress, setDeliveryAddress, deliveryType, clearCart } = useCart();
@@ -29,6 +32,8 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
   const { addToast } = useToast();
   const { t } = useLanguage();
 
+  const [customerName, setCustomerName] = useState('Stephen Karikari');
+  const [customerEmail, setCustomerEmail] = useState('stephen@example.com');
   const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'card' | 'apple' | 'cash'
   const [phoneNumber, setPhoneNumber] = useState('(555) 382-9901');
   const [dropoffNotes, setDropoffNotes] = useState('Leave at front door & ring bell');
@@ -40,6 +45,23 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
   const [cardCvv, setCardCvv] = useState('883');
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Log begin_checkout event when Checkout modal is opened
+  useEffect(() => {
+    if (isOpen && items.length > 0) {
+      logAnalyticsEvent('begin_checkout', {
+        currency: 'EUR',
+        value: total,
+        items_count: items.length,
+        items: items.map((i) => ({
+          item_id: i.foodId || i.id,
+          item_name: i.name,
+          price: i.unitPrice,
+          quantity: i.quantity
+        }))
+      });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -66,6 +88,8 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
 
     const orderDetails = {
       orderId,
+      customerName: customerName.trim() || 'Valued Customer',
+      customerEmail: customerEmail.trim() || 'guest@stevefood.com',
       items: [...items],
       subtotal,
       discount,
@@ -82,6 +106,35 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
       placedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       estimatedArrival: deliveryType === 'priority' ? '15-20 mins' : '25-35 mins'
     };
+
+    // 1. Save customer and order details to Google Firebase Cloud Firestore
+    saveOrderToFirestore(orderDetails)
+      .then((res) => {
+        if (res.success) {
+          console.log(`Order ${orderId} synced to Firebase Firestore database.`);
+        }
+      })
+      .catch((err) => console.warn('Firestore order sync:', err));
+
+    // 2. Log e-commerce purchase event in Firebase Analytics & Google Analytics
+    logAnalyticsEvent('purchase', {
+      transaction_id: orderId,
+      value: total,
+      currency: 'EUR',
+      tax: tax,
+      shipping: deliveryFee,
+      coupon: appliedPromo?.code || '',
+      customer_name: orderDetails.customerName,
+      customer_email: orderDetails.customerEmail,
+      payment_type: orderDetails.paymentMethod,
+      items: items.map((i) => ({
+        item_id: i.foodId || i.id,
+        item_name: i.name,
+        price: i.unitPrice,
+        quantity: i.quantity,
+        item_category: i.category
+      }))
+    });
 
     setIsProcessing(false);
     clearCart();
@@ -145,18 +198,43 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
             {/* Left Column: Delivery & Payment Options */}
             <div className="lg:col-span-7 space-y-6">
               
-              {/* Delivery Address Section */}
+              {/* Customer & Delivery Information Section */}
               <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase font-bold text-stone-400 tracking-wider flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> {t('checkout_step1', '1. Delivery Information')}
+                    <MapPin className="w-3.5 h-3.5 text-amber-400" /> {t('checkout_step1', '1. Customer & Delivery Information')}
                   </span>
                   <span className="text-[11px] text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">
                     {deliveryType === 'priority' ? 'Priority Express (15-20 min)' : 'Standard (25-35 min)'}
                   </span>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2.5">
+                  {/* Customer Name & Email */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder={t('checkout_name_label', 'Your Full Name')}
+                        className="w-full pl-9 pr-3 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder-stone-500 focus:outline-none"
+                      />
+                      <User className="w-3.5 h-3.5 text-stone-500 absolute left-3 top-3" />
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        placeholder={t('checkout_email_label', 'Email Address')}
+                        className="w-full pl-9 pr-3 py-2 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder-stone-500 focus:outline-none"
+                      />
+                      <Mail className="w-3.5 h-3.5 text-stone-500 absolute left-3 top-3" />
+                    </div>
+                  </div>
+
+                  {/* Delivery Address */}
                   <input
                     type="text"
                     value={deliveryAddress}
@@ -164,7 +242,9 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                     placeholder={t('checkout_street_placeholder', 'Street Address, Apt / Suite')}
                     className="w-full px-3.5 py-2.5 bg-stone-900 border border-stone-800 focus:border-amber-500 rounded-xl text-xs sm:text-sm text-white placeholder-stone-500 focus:outline-none"
                   />
-                  <div className="grid grid-cols-2 gap-2">
+
+                  {/* Phone & Dropoff Notes */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <input
                       type="text"
                       value={phoneNumber}

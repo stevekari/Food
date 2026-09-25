@@ -44,8 +44,16 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Skip non-GET requests and browser extensions
-  if (request.method !== 'GET' || !url.protocol.startsWith('http')) {
+  // Skip non-GET requests, browser extensions, and Analytics/Firebase calls
+  if (
+    request.method !== 'GET' || 
+    !url.protocol.startsWith('http') ||
+    url.hostname.includes('google-analytics.com') ||
+    url.hostname.includes('googletagmanager.com') ||
+    url.hostname.includes('googleapis.com') ||
+    url.hostname.includes('firebaseio.com') ||
+    url.hostname.includes('firebasestorage.googleapis.com')
+  ) {
     return;
   }
 

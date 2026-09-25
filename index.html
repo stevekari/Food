@@ -14,6 +14,22 @@
       content="STEVE FOOD - Gourmet smash burgers, artisan pizzas, fresh poke bowls & desserts delivered hot in under 20 minutes."
     />
 
+    <!-- Google tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-4NBWGM7J5C"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-4NBWGM7J5C", {
+        send_page_view: true,
+      });
+    </script>
+
     <!-- PWA Manifest & App Icons -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" href="/kar.png" />

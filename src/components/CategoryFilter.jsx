@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { CATEGORIES, DIETARY_FILTERS } from '../data/foodData';
 import { useLanguage } from '../context/LanguageContext';
+import { logAnalyticsEvent } from '../firebase';
 
 const ICONS_MAP = {
   Sparkles,
@@ -43,6 +44,14 @@ export default function CategoryFilter({
     return t(`filter_${diet.id.replace('-', '_')}`, diet.label);
   };
 
+  const handleCategoryClick = (catId) => {
+    onSelectCategory(catId);
+    logAnalyticsEvent('select_content', {
+      content_type: 'category',
+      item_id: catId
+    });
+  };
+
   return (
     <div className="w-full mb-10">
       
@@ -55,7 +64,7 @@ export default function CategoryFilter({
           return (
             <button
               key={cat.id}
-              onClick={() => onSelectCategory(cat.id)}
+              onClick={() => handleCategoryClick(cat.id)}
               className={`relative flex-shrink-0 flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
                 isSelected
                   ? 'text-stone-950 font-bold shadow-lg shadow-amber-500/20'

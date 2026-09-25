@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from './ToastContext';
 import { PROMO_CODES } from '../data/foodData';
+import { logAnalyticsEvent } from '../firebase';
 
 const CartContext = createContext();
 const CART_STORAGE_KEY = 'cravecraft_cart_items_v1';
@@ -64,6 +65,19 @@ export function CartProvider({ children }) {
       }
     });
 
+    // Log e-commerce add_to_cart event in Google / Firebase Analytics
+    logAnalyticsEvent('add_to_cart', {
+      currency: 'EUR',
+      value: +(unitPrice * quantity).toFixed(2),
+      items: [{
+        item_id: foodItem.id,
+        item_name: foodItem.name,
+        price: foodItem.price,
+        quantity: quantity,
+        item_category: foodItem.category
+      }]
+    });
+
     addToast(`Added ${quantity}x "${foodItem.name}" to cart!`, 'success');
   };
 
@@ -90,6 +104,16 @@ export function CartProvider({ children }) {
     const itemToRemove = items.find((i) => i.cartItemId === cartItemId);
     setItems((prevItems) => prevItems.filter((item) => item.cartItemId !== cartItemId));
     if (itemToRemove) {
+      logAnalyticsEvent('remove_from_cart', {
+        currency: 'EUR',
+        value: itemToRemove.totalItemPrice,
+        items: [{
+          item_id: itemToRemove.foodId,
+          item_name: itemToRemove.name,
+          price: itemToRemove.unitPrice,
+          quantity: itemToRemove.quantity
+        }]
+      });
       addToast(`Removed "${itemToRemove.name}" from cart`, 'info');
     }
   };
@@ -115,6 +139,12 @@ export function CartProvider({ children }) {
     }
 
     setAppliedPromo({ code: cleanCode, ...promo });
+    
+    logAnalyticsEvent('apply_coupon', {
+      coupon_code: cleanCode,
+      discount_desc: promo.description
+    });
+
     addToast(`Promo code "${cleanCode}" applied! ${promo.description}`, 'success');
     return true;
   };

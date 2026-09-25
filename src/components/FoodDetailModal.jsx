@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
+import { logAnalyticsEvent } from '../firebase';
 
 export default function FoodDetailModal({ food, isOpen, onClose }) {
   const { addToCart } = useCart();
@@ -25,10 +26,22 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && food) {
       setQuantity(1);
       setSelectedAddons([]);
       setInstructions('');
+
+      // Log e-commerce view_item event
+      logAnalyticsEvent('view_item', {
+        currency: 'EUR',
+        value: food.price,
+        items: [{
+          item_id: food.id,
+          item_name: food.name,
+          price: food.price,
+          item_category: food.category
+        }]
+      });
     }
   }, [isOpen, food]);
 

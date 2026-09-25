@@ -25,6 +25,7 @@ import InstallPwaModal from './components/InstallPwaModal';
 import PwaInstallBanner from './components/PwaInstallBanner';
 import OfflineToast from './components/OfflineToast';
 import MobileBottomNav from './components/MobileBottomNav';
+import { logAnalyticsEvent } from './firebase';
 
 function MainApp() {
   const { t } = useLanguage();
@@ -56,6 +57,27 @@ function MainApp() {
   const menuSectionRef = useRef(null);
   const dealsSectionRef = useRef(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Log site visit page view
+  useEffect(() => {
+    logAnalyticsEvent('page_view', {
+      page_title: 'STEVE FOOD - Gourmet Food Delivery',
+      page_location: window.location.href,
+      page_path: window.location.pathname
+    });
+  }, []);
+
+  // Debounced search analytics
+  useEffect(() => {
+    if (searchQuery.trim().length >= 3) {
+      const timer = setTimeout(() => {
+        logAnalyticsEvent('search', {
+          search_term: searchQuery.trim()
+        });
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [searchQuery]);
 
   useEffect(() => {
     let ticking = false;

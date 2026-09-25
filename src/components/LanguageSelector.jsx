@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, ChevronDown, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { logAnalyticsEvent } from '../firebase';
 
 export default function LanguageSelector({ isMobile = false }) {
   const { currentLanguage, currentLangObj, setLanguage, t, LANGUAGES } = useLanguage();
@@ -21,6 +22,9 @@ export default function LanguageSelector({ isMobile = false }) {
 
   const handleSelectLanguage = (code) => {
     setLanguage(code);
+    logAnalyticsEvent('change_language', {
+      language: code
+    });
     setIsOpen(false);
   };
 
