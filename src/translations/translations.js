@@ -12,12 +12,14 @@ export const TRANSLATIONS = {
   en: {
     // Navbar
     nav_search_placeholder: "Search burgers, pizzas, ramen, bowls, desserts...",
-    nav_delivering_to: "Downtown Express",
+    nav_delivering_to: "Barcelona & Madrid Express",
     nav_est_time: "20-30 min",
     nav_credits: "Credits",
     nav_cart: "Cart",
     nav_install: "Install App",
     nav_gourmet_kitchens: "Gourmet Kitchens",
+    nav_sign_in: "Sign in with Google",
+    nav_profile: "My Profile",
 
     // Bottom Dock
     dock_menu: "Menu",
@@ -26,6 +28,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Wallet",
     dock_install: "Install",
     dock_search: "Search",
+
+    // Auth Strings
+    auth_sign_in_google: "Sign in with Google",
+    auth_signed_in_as: "Signed in as",
+    auth_checkout_prompt: "Sign in with Google to complete your order, save your address & track delivery live",
+    auth_sign_out: "Sign Out",
+    auth_verified: "Verified Google Account",
 
     // Hero
     hero_promo_tag: "Use promo code",
@@ -134,9 +143,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Customer & Delivery Information",
     checkout_name_label: "Your Full Name",
     checkout_email_label: "Email Address for Order Updates",
-    checkout_street_placeholder: "Street address & Apartment/Suite",
-    checkout_phone_label: "Contact Phone for Delivery Updates",
-    checkout_dropoff_label: "Drop-off Instructions",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2n 1a, 08013 Barcelona (or Calle Gran Vía, 28, Madrid)",
+    checkout_phone_label: "Contact Phone (e.g. +34 612 345 678)",
+    checkout_dropoff_label: "e.g. 2nd floor door 1, door code #4012, leave at front door",
     checkout_step2: "2. Payment Method",
     checkout_pay_wallet: "Pre-loaded Food Credit Wallet",
     checkout_available_bal: "Available Balance:",
@@ -230,12 +239,14 @@ export const TRANSLATIONS = {
   es: {
     // Navbar
     nav_search_placeholder: "Buscar hamburguesas, pizzas, ramen, bowls, postres...",
-    nav_delivering_to: "Entrega Express Centro",
+    nav_delivering_to: "Barcelona & Madrid Express",
     nav_est_time: "20-30 min",
     nav_credits: "Créditos",
     nav_cart: "Cesta",
     nav_install: "Instalar App",
     nav_gourmet_kitchens: "Cocinas Gourmet",
+    nav_sign_in: "Continuar con Google",
+    nav_profile: "Mi Perfil",
 
     // Bottom Dock
     dock_menu: "Menú",
@@ -244,6 +255,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Billetera",
     dock_install: "Instalar",
     dock_search: "Buscar",
+
+    // Auth Strings
+    auth_sign_in_google: "Continuar con Google",
+    auth_signed_in_as: "Conectado como",
+    auth_checkout_prompt: "Inicia sesión con Google para completar tu pedido, guardar tu dirección y seguir el envío",
+    auth_sign_out: "Cerrar Sesión",
+    auth_verified: "Cuenta de Google Verificada",
 
     // Hero
     hero_promo_tag: "Usa el código",
@@ -352,9 +370,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Datos del Cliente y Entrega",
     checkout_name_label: "Nombre Completo",
     checkout_email_label: "Correo Electrónico para Seguimiento",
-    checkout_street_placeholder: "Dirección de entrega, piso, puerta",
-    checkout_phone_label: "Teléfono de Contacto",
-    checkout_dropoff_label: "Instrucciones de Entrega",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2º 1ª, 08013 Barcelona (o Calle Gran Vía, 28, Madrid)",
+    checkout_phone_label: "Teléfono de Contacto (ej. +34 612 345 678)",
+    checkout_dropoff_label: "ej. Piso 2º 1ª, código portero #4012, dejar en la puerta",
     checkout_step2: "2. Método de Pago",
     checkout_pay_wallet: "Billetera de Créditos de Comida",
     checkout_available_bal: "Saldo Disponible:",
@@ -448,12 +466,14 @@ export const TRANSLATIONS = {
   fr: {
     // Navbar
     nav_search_placeholder: "Rechercher burgers, pizzas, ramen, bowls, desserts...",
-    nav_delivering_to: "Livraison Express Centre",
+    nav_delivering_to: "Barcelone & Madrid Express",
     nav_est_time: "20-30 min",
     nav_credits: "Crédits",
     nav_cart: "Panier",
     nav_install: "Installer l'App",
     nav_gourmet_kitchens: "Cuisines Gourmet",
+    nav_sign_in: "Se connecter avec Google",
+    nav_profile: "Mon Profil",
 
     // Bottom Dock
     dock_menu: "Menu",
@@ -462,6 +482,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Portefeuille",
     dock_install: "Installer",
     dock_search: "Chercher",
+
+    // Auth Strings
+    auth_sign_in_google: "Se connecter avec Google",
+    auth_signed_in_as: "Connecté en tant que",
+    auth_checkout_prompt: "Connectez-vous avec Google pour finaliser votre commande et enregistrer votre adresse",
+    auth_sign_out: "Déconnexion",
+    auth_verified: "Compte Google Vérifié",
 
     // Hero
     hero_promo_tag: "Utilisez le code",
@@ -570,9 +597,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Informations Client & Livraison",
     checkout_name_label: "Nom et Prénom",
     checkout_email_label: "Adresse E-mail pour le Suivi",
-    checkout_street_placeholder: "Adresse, bâtiment, étage, code porte",
-    checkout_phone_label: "Numéro de Téléphone de Contact",
-    checkout_dropoff_label: "Instructions de Dépôt",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2e 1a, 08013 Barcelone (ou Calle Gran Vía, 28, Madrid)",
+    checkout_phone_label: "Numéro de Téléphone (ex. +34 612 345 678)",
+    checkout_dropoff_label: "ex. 2e étage porte 1, digicode #4012, déposer à la porte",
     checkout_step2: "2. Mode de Paiement",
     checkout_pay_wallet: "Portefeuille de Crédits Gourmands",
     checkout_available_bal: "Solde Disponible:",
@@ -666,12 +693,14 @@ export const TRANSLATIONS = {
   pt: {
     // Navbar
     nav_search_placeholder: "Pesquisar hambúrgueres, pizzas, ramen, bowls, sobremesas...",
-    nav_delivering_to: "Entrega Express Centro",
+    nav_delivering_to: "Barcelona & Madrid Express",
     nav_est_time: "20-30 min",
     nav_credits: "Créditos",
     nav_cart: "Carrinho",
     nav_install: "Instalar App",
     nav_gourmet_kitchens: "Cozinhas Gourmet",
+    nav_sign_in: "Entrar com o Google",
+    nav_profile: "Meu Perfil",
 
     // Bottom Dock
     dock_menu: "Menu",
@@ -680,6 +709,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Carteira",
     dock_install: "Instalar",
     dock_search: "Buscar",
+
+    // Auth Strings
+    auth_sign_in_google: "Entrar com o Google",
+    auth_signed_in_as: "Conectado como",
+    auth_checkout_prompt: "Inicie sessão com o Google para concluir seu pedido e salvar seu endereço",
+    auth_sign_out: "Sair da Conta",
+    auth_verified: "Conta Google Verificada",
 
     // Hero
     hero_promo_tag: "Use o código",
@@ -788,9 +824,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Dados do Cliente e Entrega",
     checkout_name_label: "Nome Completo",
     checkout_email_label: "E-mail para Acompanhamento",
-    checkout_street_placeholder: "Endereço, número, complemento",
-    checkout_phone_label: "Telefone de Contato",
-    checkout_dropoff_label: "Instruções de Entrega",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2º 1ª, 08013 Barcelona (ou Calle Gran Vía, 28, Madrid)",
+    checkout_phone_label: "Telefone de Contacto (ex. +34 612 345 678)",
+    checkout_dropoff_label: "ex. 2º andar porta 1, código #4012, deixar à porta",
     checkout_step2: "2. Forma de Pagamento",
     checkout_pay_wallet: "Carteira de Créditos",
     checkout_available_bal: "Saldo Disponível:",
@@ -884,12 +920,14 @@ export const TRANSLATIONS = {
   de: {
     // Navbar
     nav_search_placeholder: "Burger, Pizza, Ramen, Bowls, Desserts suchen...",
-    nav_delivering_to: "Express-Lieferung Zentrum",
+    nav_delivering_to: "Barcelona & Madrid Express",
     nav_est_time: "20-30 Min.",
     nav_credits: "Guthaben",
     nav_cart: "Warenkorb",
     nav_install: "App installieren",
     nav_gourmet_kitchens: "Gourmet-Küchen",
+    nav_sign_in: "Mit Google anmelden",
+    nav_profile: "Mein Profil",
 
     // Bottom Dock
     dock_menu: "Menü",
@@ -898,6 +936,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Guthaben",
     dock_install: "Installieren",
     dock_search: "Suche",
+
+    // Auth Strings
+    auth_sign_in_google: "Mit Google anmelden",
+    auth_signed_in_as: "Angemeldet als",
+    auth_checkout_prompt: "Melde dich mit Google an, um deine Bestellung abzuschließen und deine Adresse zu speichern",
+    auth_sign_out: "Abmelden",
+    auth_verified: "Verifiziertes Google-Konto",
 
     // Hero
     hero_promo_tag: "Gutscheincode nutzen",
@@ -1006,9 +1051,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Kunden- & Lieferangaben",
     checkout_name_label: "Vollständiger Name",
     checkout_email_label: "E-Mail-Adresse für Bestellstatus",
-    checkout_street_placeholder: "Straße, Hausnummer, Apartment",
-    checkout_phone_label: "Kontakt-Telefonnummer",
-    checkout_dropoff_label: "Lieferhinweise",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2. OG Tür 1, 08013 Barcelona (oder Calle Gran Vía, 28, Madrid)",
+    checkout_phone_label: "Kontakt-Telefonnummer (z.B. +34 612 345 678)",
+    checkout_dropoff_label: "z.B. 2. Stock Tür 1, Klingelcode #4012, an der Tür abstellen",
     checkout_step2: "2. Zahlungsart",
     checkout_pay_wallet: "Gourmet-Credit-Guthaben",
     checkout_available_bal: "Verfügbares Guthaben:",
@@ -1102,12 +1147,14 @@ export const TRANSLATIONS = {
   twi: {
     // Navbar
     nav_search_placeholder: "Hwehwɛ aduane, smash burger, pizza, ramen, dessert...",
-    nav_delivering_to: "Downtown Express",
+    nav_delivering_to: "Barcelona & Madrid Express",
     nav_est_time: "Simma 20-30",
     nav_credits: "Sika / Credits",
     nav_cart: "Kɛntɛn",
     nav_install: "Fa App No Si Hɔ",
     nav_gourmet_kitchens: "Aduanepɔn Gyinabea",
+    nav_sign_in: "Fa Google Wura Mu",
+    nav_profile: "Me Profile",
 
     // Bottom Dock
     dock_menu: "Aduane",
@@ -1116,6 +1163,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Kotokuo",
     dock_install: "Fa Si Hɔ",
     dock_search: "Hwehwɛ",
+
+    // Auth Strings
+    auth_sign_in_google: "Fa Google Wura Mu",
+    auth_signed_in_as: "Wode yi na egu mu:",
+    auth_checkout_prompt: "Fa wo Google account wura mu na fa to wo aduane ntɛm na sie wo beaeɛ",
+    auth_sign_out: "Pue Firi Mu",
+    auth_verified: "Google Account a Yɛagye atom",
 
     // Hero
     hero_promo_tag: "Fa code yi di dwuma",
@@ -1224,9 +1278,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Wo Din ne Baabi a Yɛmfa Mmra",
     checkout_name_label: "Wo Din Nyinaa",
     checkout_email_label: "Wo Email Address",
-    checkout_street_placeholder: "Wo kuro mu kwan, dan nɔma, ne fie nɔma",
-    checkout_phone_label: "Wo Frɛ Nɔma",
-    checkout_dropoff_label: "Akyerɛkyerɛ Sɛnea Yɛmfa Nto Hɔ",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2n 1a, 08013 Barcelona (anaa Calle Gran Vía, 28, Madrid)",
+    checkout_phone_label: "Wo Frɛ Nɔma (e.g. +34 612 345 678)",
+    checkout_dropoff_label: "e.g. Abansoro a ɛtɔ so 2, dan 1a, code #4012, gyae wɔ pon no ano",
     checkout_step2: "2. Sɛnea Wobɛtua Sika",
     checkout_pay_wallet: "Aduane Kotokuo a Sika Wɔ Mu",
     checkout_available_bal: "Sika a Wo Wɔ:",
@@ -1320,12 +1374,14 @@ export const TRANSLATIONS = {
   ca: {
     // Navbar
     nav_search_placeholder: "Cercar hamburgueses, pizzes, ramen, bowls, postres...",
-    nav_delivering_to: "Lliurament Express Centre",
+    nav_delivering_to: "Barcelona & Madrid Express",
     nav_est_time: "20-30 min",
     nav_credits: "Crèdits",
     nav_cart: "Cistella",
     nav_install: "Instal·lar App",
     nav_gourmet_kitchens: "Cuines Gourmet",
+    nav_sign_in: "Inicia sessió amb Google",
+    nav_profile: "El Meu Perfil",
 
     // Bottom Dock
     dock_menu: "Menú",
@@ -1334,6 +1390,13 @@ export const TRANSLATIONS = {
     dock_wallet: "Moneder",
     dock_install: "Instal·lar",
     dock_search: "Cercar",
+
+    // Auth Strings
+    auth_sign_in_google: "Inicia sessió amb Google",
+    auth_signed_in_as: "Connectat com a",
+    auth_checkout_prompt: "Inicia sessió amb Google per completar la teva comanda i desar la teva adreça",
+    auth_sign_out: "Tancar Sessió",
+    auth_verified: "Compte de Google Verificat",
 
     // Hero
     hero_promo_tag: "Fes servir el codi",
@@ -1442,9 +1505,9 @@ export const TRANSLATIONS = {
     checkout_step1: "1. Dades del Client i Lliurament",
     checkout_name_label: "Nom Complet",
     checkout_email_label: "Correu Electrònic de Seguiment",
-    checkout_street_placeholder: "Adreça de lliurament, pis, porta",
-    checkout_phone_label: "Telèfon de Contacte",
-    checkout_dropoff_label: "Instruccions de Lliurament",
+    checkout_street_placeholder: "Carrer de Mallorca, 401, 2n 1a, 08013 Barcelona (o Carrer Gran Via, 28, Madrid)",
+    checkout_phone_label: "Telèfon de Contacte (ex. +34 612 345 678)",
+    checkout_dropoff_label: "ex. Pis 2n 1a, codi porter #4012, deixar a la porta",
     checkout_step2: "2. Mètode de Pagament",
     checkout_pay_wallet: "Moneder de Crèdits de Menjar",
     checkout_available_bal: "Saldo Disponible:",

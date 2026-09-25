@@ -26,7 +26,7 @@ export function CartProvider({ children }) {
   const [promoInput, setPromoInput] = useState('');
   const [tip, setTip] = useState(3.00);
   const [deliveryType, setDeliveryType] = useState('standard'); // 'standard' | 'priority'
-  const [deliveryAddress, setDeliveryAddress] = useState('742 Evergreen Terrace, Apt 4B');
+  const [deliveryAddress, setDeliveryAddress] = useState('Carrer de Mallorca, 401, 2n 1a, 08013 Barcelona');
 
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));

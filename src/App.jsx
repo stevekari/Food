@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, UtensilsCrossed, Search, Flame, ArrowUp } from 'lucide-react';
 import { FOOD_ITEMS } from './data/foodData';
 import { ToastProvider } from './context/ToastContext';
+import { AuthProvider } from './context/AuthContext';
 import { WalletProvider, useWallet } from './context/WalletContext';
 import { CartProvider, useCart } from './context/CartContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -344,11 +345,13 @@ export default function App() {
   return (
     <LanguageProvider>
       <ToastProvider>
-        <WalletProvider>
-          <CartProvider>
-            <MainApp />
-          </CartProvider>
-        </WalletProvider>
+        <AuthProvider>
+          <WalletProvider>
+            <CartProvider>
+              <MainApp />
+            </CartProvider>
+          </WalletProvider>
+        </AuthProvider>
       </ToastProvider>
     </LanguageProvider>
   );

@@ -1,7 +1,8 @@
 // Firebase Configuration and Initialization
 import { initializeApp } from 'firebase/app';
 import { getAnalytics, logEvent, isSupported } from 'firebase/analytics';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 // Web app's Firebase configuration
 const firebaseConfig = {
@@ -20,6 +21,11 @@ export const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore Database
 export const db = getFirestore(app);
 
+// Initialize Firebase Authentication
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+
 // Initialize Firebase Analytics
 export let analytics = null;
 if (typeof window !== 'undefined') {
@@ -37,7 +43,7 @@ if (typeof window !== 'undefined') {
 
 /**
  * Log custom or e-commerce events to Firebase Analytics & Google Tag (gtag)
- * @param {string} eventName - Standard or custom event name (e.g., 'purchase', 'add_to_cart', 'page_view')
+ * @param {string} eventName - Standard or custom event name (e.g., 'purchase', 'add_to_cart', 'login')
  * @param {object} eventParams - Event parameters
  */
 export const logAnalyticsEvent = (eventName, eventParams = {}) => {
@@ -57,6 +63,56 @@ export const logAnalyticsEvent = (eventName, eventParams = {}) => {
 };
 
 /**
+ * Sign In / Register with Google Account
+ * @returns {Promise<{user: object | null, error: string | null}>}
+ */
+export const loginWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    // Log login event in analytics
+    logAnalyticsEvent('login', { method: 'google' });
+
+    // Sync/Upsert user profile in Firestore 'users' collection
+    if (user) {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          displayName: user.displayName || '',
+          email: user.email || '',
+          photoURL: user.photoURL || '',
+          lastLogin: serverTimestamp(),
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (dbErr) {
+        console.warn('Could not upsert user to Firestore:', dbErr);
+      }
+    }
+
+    return { user, error: null };
+  } catch (error) {
+    console.error('Google Sign-In Error:', error);
+    return { user: null, error: error.message };
+  }
+};
+
+/**
+ * Sign Out Current User
+ */
+export const logoutUser = async () => {
+  try {
+    await signOut(auth);
+    logAnalyticsEvent('logout');
+    return { success: true };
+  } catch (error) {
+    console.error('Sign-Out Error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
  * Save customer order details to Cloud Firestore ('orders' collection)
  * @param {object} orderData - Full customer & purchase details
  * @returns {Promise<{success: boolean, id?: string, error?: string}>}
@@ -68,9 +124,11 @@ export const saveOrderToFirestore = async (orderData) => {
     // Sanitize order details for Firestore
     const orderPayload = {
       orderId: orderData.orderId,
-      customerName: orderData.customerName || 'Valued Guest',
+      userId: orderData.userId || (auth.currentUser ? auth.currentUser.uid : null),
+      customerName: orderData.customerName || (auth.currentUser ? auth.currentUser.displayName : 'Valued Guest'),
       customerPhone: orderData.phoneNumber || '',
-      customerEmail: orderData.customerEmail || '',
+      customerEmail: orderData.customerEmail || (auth.currentUser ? auth.currentUser.email : ''),
+      userPhotoURL: auth.currentUser ? auth.currentUser.photoURL : null,
       deliveryAddress: orderData.deliveryAddress || '',
       deliveryType: orderData.deliveryType || 'standard',
       dropoffNotes: orderData.dropoffNotes || '',

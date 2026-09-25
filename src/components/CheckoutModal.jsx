@@ -24,23 +24,56 @@ import { useCart } from '../context/CartContext';
 import { useWallet } from '../context/WalletContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { saveOrderToFirestore, logAnalyticsEvent } from '../firebase';
+
+function GoogleIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+      />
+    </svg>
+  );
+}
 
 export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
   const { items, subtotal, discount, deliveryFee, tax, tip, total, appliedPromo, deliveryAddress, setDeliveryAddress, deliveryType, clearCart } = useCart();
   const { balance, deductCredit, setIsWalletModalOpen } = useWallet();
   const { addToast } = useToast();
   const { t } = useLanguage();
+  const { user, loginWithGoogle } = useAuth();
 
-  const [customerName, setCustomerName] = useState('Stephen Karikari');
-  const [customerEmail, setCustomerEmail] = useState('stephen@example.com');
+  const [customerName, setCustomerName] = useState(user?.displayName || 'Stephen Karikari');
+  const [customerEmail, setCustomerEmail] = useState(user?.email || 'stephen@example.com');
   const [paymentMethod, setPaymentMethod] = useState('wallet'); // 'wallet' | 'card' | 'apple' | 'cash'
-  const [phoneNumber, setPhoneNumber] = useState('(555) 382-9901');
-  const [dropoffNotes, setDropoffNotes] = useState('Leave at front door & ring bell');
+  const [phoneNumber, setPhoneNumber] = useState('+34 612 345 678');
+  const [dropoffNotes, setDropoffNotes] = useState('Piso 2º 1ª, código portero #4012, dejar en la puerta');
   
+  // Update customer info automatically when user logs in with Google
+  useEffect(() => {
+    if (user) {
+      if (user.displayName) setCustomerName(user.displayName);
+      if (user.email) setCustomerEmail(user.email);
+    }
+  }, [user]);
+
   // Card Details State for 3D Card Simulation
   const [cardNumber, setCardNumber] = useState('4532 8920 1142 6790');
-  const [cardHolder, setCardHolder] = useState('STEPHEN KARIKARI');
+  const [cardHolder, setCardHolder] = useState(user?.displayName?.toUpperCase() || 'STEPHEN KARIKARI');
   const [cardExpiry, setCardExpiry] = useState('08/28');
   const [cardCvv, setCardCvv] = useState('883');
   const [isCardFlipped, setIsCardFlipped] = useState(false);
@@ -196,8 +229,63 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Left Column: Delivery & Payment Options */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-7 space-y-4">
               
+              {/* Google Sign-in Banner / Verified User Status Card */}
+              {!user ? (
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/5 border border-amber-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-amber-500/5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-md">
+                      <GoogleIcon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <span>{t('auth_sign_in_google', 'Sign in with Google')}</span>
+                        <span className="text-[10px] bg-amber-500/30 text-amber-300 px-1.5 py-0.2 rounded font-semibold">1-Tap</span>
+                      </div>
+                      <div className="text-[11px] text-stone-300 leading-tight">
+                        {t('auth_checkout_prompt', 'Sign in to save your Spain delivery address & sync orders live')}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={loginWithGoogle}
+                    className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white hover:bg-stone-100 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 shadow transition-all active:scale-95 shrink-0 cursor-pointer"
+                  >
+                    <GoogleIcon className="w-4 h-4" />
+                    <span>{t('auth_sign_in_google', 'Continue with Google')}</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="p-3 rounded-2xl bg-stone-950/80 border border-emerald-500/30 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {user.photoURL ? (
+                      <img 
+                        src={user.photoURL} 
+                        alt="" 
+                        className="w-8 h-8 rounded-full object-cover border border-emerald-400 shrink-0 shadow" 
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-stone-950 font-bold flex items-center justify-center text-xs shrink-0 shadow">
+                        {user.displayName?.charAt(0) || 'U'}
+                      </div>
+                    )}
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-white truncate">
+                        <span>{user.displayName || 'Food Lover'}</span>
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded font-medium border border-emerald-500/20">
+                          <ShieldCheck className="w-3 h-3" /> {t('auth_verified', 'Verified')}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-stone-400 truncate">{user.email}</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] text-emerald-400 font-mono hidden sm:inline-block">Google Synced</span>
+                </div>
+              )}
+
               {/* Customer & Delivery Information Section */}
               <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800 space-y-3">
                 <div className="flex items-center justify-between">
