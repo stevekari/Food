@@ -78,7 +78,7 @@ export default function MobileBottomNav({
             </AnimatePresence>
           </div>
           <span className="text-[10px] font-extrabold text-amber-400 mt-1 font-mono">
-            {itemCount > 0 ? `$${total.toFixed(2)}` : t('dock_cart', 'Cart')}
+            {itemCount > 0 ? `€${total.toFixed(2)}` : t('dock_cart', 'Cart')}
           </span>
         </motion.button>
 
@@ -91,7 +91,7 @@ export default function MobileBottomNav({
             <Wallet className="w-4 h-4" />
           </div>
           <span className="text-[10px] font-bold tracking-tight text-stone-300 font-mono">
-            ${balance.toFixed(0)}
+            €{balance.toFixed(0)}
           </span>
         </button>
 

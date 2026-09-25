@@ -161,7 +161,7 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
                           )}
                         </div>
                         <span className="font-mono text-stone-200 font-semibold">
-                          ${item.totalItemPrice.toFixed(2)}
+                          €{item.totalItemPrice.toFixed(2)}
                         </span>
                       </div>
                     ))}
@@ -171,37 +171,37 @@ export default function OrderSuccessModal({ order, isOpen, onClose }) {
                   <div className="pt-3 border-t border-stone-800 space-y-1.5 text-xs text-stone-400">
                     <div className="flex justify-between">
                       <span>{t('cart_subtotal', 'Subtotal')}</span>
-                      <span className="font-mono text-stone-200">${order.subtotal.toFixed(2)}</span>
+                      <span className="font-mono text-stone-200">€{order.subtotal.toFixed(2)}</span>
                     </div>
 
                     {order.discount > 0 && (
                       <div className="flex justify-between text-emerald-400">
                         <span>{t('cart_discount', 'Promo Discount')} ({order.appliedPromo?.code})</span>
-                        <span className="font-mono">-${order.discount.toFixed(2)}</span>
+                        <span className="font-mono">-€{order.discount.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between">
                       <span>{t('cart_delivery_fee', 'Delivery Fee')}</span>
-                      <span className="font-mono text-stone-200">{order.deliveryFee === 0 ? t('cart_free_delivery', 'FREE') : `$${order.deliveryFee.toFixed(2)}`}</span>
+                      <span className="font-mono text-stone-200">{order.deliveryFee === 0 ? t('cart_free_delivery', 'FREE') : `€${order.deliveryFee.toFixed(2)}`}</span>
                     </div>
 
                     <div className="flex justify-between">
                       <span>{t('cart_tax', 'Estimated Tax')}</span>
-                      <span className="font-mono text-stone-200">${order.tax.toFixed(2)}</span>
+                      <span className="font-mono text-stone-200">€{order.tax.toFixed(2)}</span>
                     </div>
 
                     {order.tip > 0 && (
                       <div className="flex justify-between">
                         <span>{t('cart_tip', 'Courier Tip')}</span>
-                        <span className="font-mono text-stone-200">${order.tip.toFixed(2)}</span>
+                        <span className="font-mono text-stone-200">€{order.tip.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
                       <span className="font-bold text-sm">{t('cart_total', 'Estimated Total')}</span>
                       <span className="font-mono font-black text-xl text-amber-400">
-                        ${order.total.toFixed(2)}
+                        €{order.total.toFixed(2)}
                       </span>
                     </div>
                   </div>

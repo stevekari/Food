@@ -166,7 +166,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                               <div className="text-[11px] text-amber-400/90 mt-0.5 space-y-0.5">
                                 {item.selectedAddons.map((addon) => (
                                   <div key={addon.id} className="truncate">
-                                    + {addon.name} (${addon.price.toFixed(2)})
+                                    + {addon.name} (€{addon.price.toFixed(2)})
                                   </div>
                                 ))}
                               </div>
@@ -200,7 +200,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                               </div>
 
                               <span className="text-sm font-mono font-bold text-amber-400">
-                                ${item.totalItemPrice.toFixed(2)}
+                                €{item.totalItemPrice.toFixed(2)}
                               </span>
                             </div>
                           </div>
@@ -227,7 +227,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                             <span>{t('cart_standard_del', 'Standard')}</span>
                           </div>
                           <div className="text-[11px] text-stone-400">
-                            25-35 min • {isFreeDeliveryEligible ? t('cart_free_delivery', 'FREE') : '$2.99'}
+                            25-35 min • {isFreeDeliveryEligible ? t('cart_free_delivery', 'FREE') : '€2.99'}
                           </div>
                         </button>
 
@@ -244,7 +244,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                             <span className="text-white">{t('cart_priority_del', 'Priority Express')}</span>
                           </div>
                           <div className="text-[11px] text-stone-400">
-                            15-20 min • {isFreeDeliveryEligible ? '$2.00' : '$4.99'}
+                            15-20 min • {isFreeDeliveryEligible ? '€2.00' : '€4.99'}
                           </div>
                         </button>
                       </div>
@@ -317,7 +317,7 @@ export default function CartDrawer({ onCheckoutClick }) {
                                 : 'bg-stone-900 text-stone-300 hover:bg-stone-800 border border-stone-800'
                             }`}
                           >
-                            {amount === 0 ? 'No Tip' : `$${amount}`}
+                            {amount === 0 ? 'No Tip' : `€${amount}`}
                           </button>
                         ))}
                       </div>
@@ -335,13 +335,13 @@ export default function CartDrawer({ onCheckoutClick }) {
                   <div className="space-y-1.5 text-xs text-stone-400">
                     <div className="flex justify-between">
                       <span>{t('cart_subtotal', 'Subtotal')}</span>
-                      <span className="font-mono text-stone-200">${subtotal.toFixed(2)}</span>
+                      <span className="font-mono text-stone-200">€{subtotal.toFixed(2)}</span>
                     </div>
 
                     {discount > 0 && (
                       <div className="flex justify-between text-emerald-400 font-semibold">
                         <span>{t('cart_discount', 'Promo Discount')} ({appliedPromo?.code})</span>
-                        <span className="font-mono">-${discount.toFixed(2)}</span>
+                        <span className="font-mono">-€{discount.toFixed(2)}</span>
                       </div>
                     )}
 
@@ -351,34 +351,34 @@ export default function CartDrawer({ onCheckoutClick }) {
                         {deliveryFee === 0 ? (
                           <span className="text-emerald-400 font-bold">{t('cart_free_delivery', 'FREE')}</span>
                         ) : (
-                          `$${deliveryFee.toFixed(2)}`
+                          `€${deliveryFee.toFixed(2)}`
                         )}
                       </span>
                     </div>
 
                     <div className="flex justify-between">
                       <span>{t('cart_tax', 'Estimated Tax')}</span>
-                      <span className="font-mono text-stone-200">${tax.toFixed(2)}</span>
+                      <span className="font-mono text-stone-200">€{tax.toFixed(2)}</span>
                     </div>
 
                     {tip > 0 && (
                       <div className="flex justify-between">
                         <span>{t('cart_tip', 'Courier Tip')}</span>
-                        <span className="font-mono text-stone-200">${tip.toFixed(2)}</span>
+                        <span className="font-mono text-stone-200">€{tip.toFixed(2)}</span>
                       </div>
                     )}
 
                     <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
                       <span className="font-bold text-sm">{t('cart_total', 'Estimated Total')}</span>
                       <span className="font-mono font-extrabold text-xl text-amber-400">
-                        ${total.toFixed(2)}
+                        €{total.toFixed(2)}
                       </span>
                     </div>
                   </div>
 
                   {/* Wallet Credit Availability Notice */}
                   <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between text-xs">
-                    <span className="text-stone-300">{t('cart_wallet_credit', 'Wallet Credit:')} <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong></span>
+                    <span className="text-stone-300">{t('cart_wallet_credit', 'Wallet Credit:')} <strong className="text-amber-400 font-mono">€{balance.toFixed(2)}</strong></span>
                     {balance >= total ? (
                       <span className="text-emerald-400 font-semibold flex items-center gap-1">
                         <Check className="w-3.5 h-3.5" /> {t('cart_covered_credit', 'Covered with Credit')}

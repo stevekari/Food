@@ -118,7 +118,7 @@ export default function CategoryFilter({
             >
               <option value="featured" className="bg-stone-900 text-white">{t('sort_featured', '✨ Featured')}</option>
               <option value="rating" className="bg-stone-900 text-white">{t('sort_rating', '⭐ Highest Rated')}</option>
-              <option value="price-low" className="bg-stone-900 text-white">{t('sort_price_low', '💲 Price: Low to High')}</option>
+              <option value="price-low" className="bg-stone-900 text-white">{t('sort_price_low', '💶 Price: Low to High')}</option>
               <option value="price-high" className="bg-stone-900 text-white">{t('sort_price_high', '💎 Price: High to Low')}</option>
               <option value="time" className="bg-stone-900 text-white">{t('sort_time', '⚡ Fastest Delivery')}</option>
             </select>

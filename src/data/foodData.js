@@ -384,8 +384,8 @@ export const PROMO_CODES = {
   'STEVE20': { discountPercent: 20, description: '20% off entire order (STEVE FOOD Special)' },
   'CRAVE20': { discountPercent: 20, description: '20% off entire order' },
   'FREEDEL': { freeDelivery: true, description: 'Free Express Delivery' },
-  'YUMMY10': { discountAmount: 10, minSpend: 30, description: '$10 off orders over $30' },
-  'CHEF5': { discountAmount: 5, description: '$5 off chef favorites' }
+  'YUMMY10': { discountAmount: 10, minSpend: 30, description: '€10 off orders over €30' },
+  'CHEF5': { discountAmount: 5, description: '€5 off chef favorites' }
 };
 
 export const REVIEWS = [

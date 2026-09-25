@@ -54,7 +54,7 @@ export function WalletProvider({ children }) {
     const newTx = {
       id: `tx_${Date.now()}`,
       type: 'credit',
-      title: bonus > 0 ? `Credit Top-Up (+$${bonus} Bonus)` : 'Credit Top-Up',
+      title: bonus > 0 ? `Credit Top-Up (+€${bonus} Bonus)` : 'Credit Top-Up',
       amount: totalAdded,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       status: 'Completed',
@@ -62,12 +62,12 @@ export function WalletProvider({ children }) {
     };
 
     setTransactions((prev) => [newTx, ...prev]);
-    addToast(`Successfully added $${totalAdded.toFixed(2)} to your Credit Wallet!`, 'credit');
+    addToast(`Successfully added €${totalAdded.toFixed(2)} to your Credit Wallet!`, 'credit');
   };
 
   const deductCredit = (amount, orderId) => {
     if (balance < amount) {
-      addToast(`Insufficient credit balance. You have $${balance.toFixed(2)}, need $${amount.toFixed(2)}`, 'error');
+      addToast(`Insufficient credit balance. You have €${balance.toFixed(2)}, need €${amount.toFixed(2)}`, 'error');
       return false;
     }
 
@@ -93,7 +93,7 @@ export function WalletProvider({ children }) {
 
   const resetCredit = () => {
     setBalance(INITIAL_BALANCE);
-    addToast('Credit balance reset to $125.00', 'info');
+    addToast('Credit balance reset to €125.00', 'info');
   };
 
   return (

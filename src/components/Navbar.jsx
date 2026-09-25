@@ -146,7 +146,7 @@ export default function Navbar({
                   {t('nav_credits', 'Credits')}
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-white font-mono">
-                  ${balance.toFixed(2)}
+                  €{balance.toFixed(2)}
                 </span>
               </div>
               <div className="w-5 h-5 rounded-full bg-stone-800 flex items-center justify-center text-stone-300 group-hover:text-white transition-colors">
@@ -161,7 +161,7 @@ export default function Navbar({
               title="Food Credits"
             >
               <Wallet className="w-3.5 h-3.5 text-amber-400" />
-              <span>${balance.toFixed(0)}</span>
+              <span>€{balance.toFixed(0)}</span>
             </button>
 
             {/* Desktop Cart Button */}
@@ -189,7 +189,7 @@ export default function Navbar({
               </div>
 
               <span className="text-sm font-extrabold tracking-wide">
-                {itemCount > 0 ? `$${total.toFixed(2)}` : t('nav_cart', 'Cart')}
+                {itemCount > 0 ? `€${total.toFixed(2)}` : t('nav_cart', 'Cart')}
               </span>
             </motion.button>
 

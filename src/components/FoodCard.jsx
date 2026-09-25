@@ -130,11 +130,11 @@ export default function FoodCard({ food, onOpenDetails }) {
         <div className="mt-5 pt-3.5 border-t border-stone-800/80 flex items-center justify-between gap-3">
           <div className="flex items-baseline gap-2">
             <span className="text-xl font-extrabold text-white font-mono">
-              ${food.price.toFixed(2)}
+              €{food.price.toFixed(2)}
             </span>
             {food.originalPrice && (
               <span className="text-xs text-stone-500 line-through font-mono">
-                ${food.originalPrice.toFixed(2)}
+                €{food.originalPrice.toFixed(2)}
               </span>
             )}
           </div>

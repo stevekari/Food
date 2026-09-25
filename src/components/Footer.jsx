@@ -73,9 +73,9 @@ export default function Footer() {
               {t('footer_newsletter_title', 'Join Foodie Club')}
             </h4>
             <p className="text-stone-400 text-xs">
-              {t('footer_newsletter_desc', 'Subscribe to unlock secret chef tasting menus and receive an instant $10 food credit voucher.')}
+              {t('footer_newsletter_desc', 'Subscribe to unlock secret chef tasting menus and receive an instant €10 food credit voucher.')}
             </p>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed! $10 voucher code sent to your email.'); }} className="flex gap-2">
+            <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed! €10 voucher code sent to your email.'); }} className="flex gap-2">
               <input
                 type="email"
                 placeholder={t('footer_newsletter_placeholder', 'Your email address')}

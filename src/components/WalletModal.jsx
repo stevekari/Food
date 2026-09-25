@@ -18,8 +18,8 @@ import { useLanguage } from '../context/LanguageContext';
 
 const PACKAGES = [
   { id: 'p1', amount: 25, bonus: 0, label: 'Starter Pack', tag: 'Standard' },
-  { id: 'p2', amount: 50, bonus: 5, label: 'Foodie Favorite', tag: '+$5 Bonus Free', isPopular: true },
-  { id: 'p3', amount: 100, bonus: 15, label: 'VIP Feast', tag: '+$15 Bonus Free' },
+  { id: 'p2', amount: 50, bonus: 5, label: 'Foodie Favorite', tag: '+€5 Bonus Free', isPopular: true },
+  { id: 'p3', amount: 100, bonus: 15, label: 'VIP Feast', tag: '+€15 Bonus Free' },
 ];
 
 export default function WalletModal() {
@@ -95,7 +95,7 @@ export default function WalletModal() {
               <div>
                 <span className="text-xs uppercase font-bold text-amber-400/90 tracking-wider">{t('wallet_instant_balance', 'Available Credit Balance')}</span>
                 <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white mt-0.5">
-                  ${balance.toFixed(2)} <span className="text-xs font-sans text-stone-400 font-medium">USD</span>
+                  €{balance.toFixed(2)} <span className="text-xs font-sans text-stone-400 font-medium">EUR</span>
                 </div>
               </div>
 
@@ -107,7 +107,7 @@ export default function WalletModal() {
                   onClick={resetCredit}
                   className="text-[11px] text-stone-400 hover:text-amber-400 transition-colors flex items-center gap-1 mt-1"
                 >
-                  <RotateCcw className="w-3 h-3" /> Reset ($125)
+                  <RotateCcw className="w-3 h-3" /> Reset (€125)
                 </button>
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function WalletModal() {
                       <div>
                         <div className="text-xs font-semibold text-stone-400">{pkg.label}</div>
                         <div className="text-2xl font-mono font-bold text-white mt-1">
-                          ${pkg.amount}
+                          €{pkg.amount}
                         </div>
                       </div>
 
@@ -170,7 +170,7 @@ export default function WalletModal() {
               <div className="mt-3 flex items-center gap-2">
                 <input
                   type="number"
-                  placeholder={t('wallet_or_custom', 'Or Enter Custom Credit Amount ($)')}
+                  placeholder={t('wallet_or_custom', 'Or Enter Custom Credit Amount (€)')}
                   value={customAmount}
                   onChange={(e) => {
                     setCustomAmount(e.target.value);
@@ -230,7 +230,7 @@ export default function WalletModal() {
                             isCredit ? 'text-emerald-400' : 'text-stone-200'
                           }`}
                         >
-                          {isCredit ? '+' : '-'}${tx.amount.toFixed(2)}
+                          {isCredit ? '+' : '-'}€{tx.amount.toFixed(2)}
                         </div>
                         <span className="text-[9px] text-stone-400">{tx.status}</span>
                       </div>

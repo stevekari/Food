@@ -215,7 +215,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
                           </div>
 
                           <span className="text-sm font-bold font-mono text-amber-400">
-                            +${addon.price.toFixed(2)}
+                            +€{addon.price.toFixed(2)}
                           </span>
                         </div>
                       );
@@ -273,7 +273,7 @@ export default function FoodDetailModal({ food, isOpen, onClose }) {
                 <span>{t('modal_add_to_cart', 'Add to Cart')}</span>
               </div>
               <span className="font-mono font-black text-stone-950 text-base">
-                ${totalPrice.toFixed(2)}
+                €{totalPrice.toFixed(2)}
               </span>
             </motion.button>
 

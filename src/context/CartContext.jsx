@@ -110,7 +110,7 @@ export function CartProvider({ children }) {
     }
 
     if (promo.minSpend && subtotal < promo.minSpend) {
-      addToast(`Promo code "${cleanCode}" requires minimum spend of $${promo.minSpend.toFixed(2)}`, 'error');
+      addToast(`Promo code "${cleanCode}" requires minimum spend of €${promo.minSpend.toFixed(2)}`, 'error');
       return false;
     }
 

@@ -93,7 +93,7 @@ export default function SpecialDeals() {
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-xl text-white">{t('deals_card2_title', 'Top-Up $50, Get $5 Free')}</h3>
+              <h3 className="font-display font-bold text-xl text-white">{t('deals_card2_title', 'Top-Up €50, Get €5 Free')}</h3>
               <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
                 {t('deals_card2_desc', '10% instant food credit bonus automatically added to your digital wallet balance.')}
               </p>
@@ -130,7 +130,7 @@ export default function SpecialDeals() {
 
               <h3 className="font-display font-bold text-xl text-white">{t('deals_card3_title', 'Free Express Delivery')}</h3>
               <p className="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                {t('deals_card3_desc', 'Zero courier fee on all orders over $35 with guaranteed under 20-minute delivery.')}
+                {t('deals_card3_desc', 'Zero courier fee on all orders over €35 with guaranteed under 20-minute delivery.')}
               </p>
             </div>
 

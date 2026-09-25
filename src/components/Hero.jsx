@@ -81,7 +81,7 @@ export default function Hero({ onExploreClick }) {
                 <div>
                   <div className="text-[11px] sm:text-xs text-stone-400 font-medium">{t('hero_wallet_title', 'Your Active Credit Balance')}</div>
                   <div className="text-sm sm:text-base font-bold text-white font-mono flex items-center gap-2">
-                    ${balance.toFixed(2)} USD
+                    €{balance.toFixed(2)} EUR
                     <span className="text-[10px] sm:text-[11px] font-sans font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">
                       {t('hero_ready_to_spend', 'Ready to spend')}
                     </span>

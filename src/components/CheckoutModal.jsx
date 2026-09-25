@@ -218,14 +218,14 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                             </span>
                           </div>
                           <div className="text-xs text-stone-400">
-                            {t('checkout_available_bal', 'Available Credit:')} <strong className="text-amber-400 font-mono">${balance.toFixed(2)}</strong>
+                            {t('checkout_available_bal', 'Available Credit:')} <strong className="text-amber-400 font-mono">€{balance.toFixed(2)}</strong>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     <span className="font-mono text-sm font-extrabold text-amber-400">
-                      ${balance.toFixed(2)}
+                      €{balance.toFixed(2)}
                     </span>
                   </div>
 
@@ -247,7 +247,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                         <div className="flex items-center justify-between w-full text-rose-300">
                           <div className="flex items-center gap-1.5">
                             <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                            <span>Short by ${(total - balance).toFixed(2)}</span>
+                            <span>Short by €{(total - balance).toFixed(2)}</span>
                           </div>
                           <button
                             type="button"
@@ -485,7 +485,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                         <span className="text-stone-200 truncate">{item.name}</span>
                       </div>
                       <span className="font-mono font-semibold text-stone-300 flex-shrink-0">
-                        ${item.totalItemPrice.toFixed(2)}
+                        €{item.totalItemPrice.toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -495,37 +495,37 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                 <div className="mt-4 pt-3 border-t border-stone-800 space-y-1.5 text-xs text-stone-400">
                   <div className="flex justify-between">
                     <span>{t('cart_subtotal', 'Subtotal')}</span>
-                    <span className="font-mono text-stone-200">${subtotal.toFixed(2)}</span>
+                    <span className="font-mono text-stone-200">€{subtotal.toFixed(2)}</span>
                   </div>
 
                   {discount > 0 && (
                     <div className="flex justify-between text-emerald-400 font-medium">
                       <span>{t('cart_discount', 'Promo Discount')} ({appliedPromo?.code})</span>
-                      <span className="font-mono">-${discount.toFixed(2)}</span>
+                      <span className="font-mono">-€{discount.toFixed(2)}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between">
                     <span>{t('cart_delivery_fee', 'Delivery')}</span>
-                    <span className="font-mono text-stone-200">{deliveryFee === 0 ? t('cart_free_delivery', 'FREE') : `$${deliveryFee.toFixed(2)}`}</span>
+                    <span className="font-mono text-stone-200">{deliveryFee === 0 ? t('cart_free_delivery', 'FREE') : `€${deliveryFee.toFixed(2)}`}</span>
                   </div>
 
                   <div className="flex justify-between">
                     <span>{t('cart_tax', 'Tax (8.25%)')}</span>
-                    <span className="font-mono text-stone-200">${tax.toFixed(2)}</span>
+                    <span className="font-mono text-stone-200">€{tax.toFixed(2)}</span>
                   </div>
 
                   {tip > 0 && (
                     <div className="flex justify-between">
                       <span>{t('cart_tip', 'Driver Tip')}</span>
-                      <span className="font-mono text-stone-200">${tip.toFixed(2)}</span>
+                      <span className="font-mono text-stone-200">€{tip.toFixed(2)}</span>
                     </div>
                   )}
 
                   <div className="pt-2 border-t border-stone-800 flex justify-between items-baseline text-white">
                     <span className="font-bold text-sm">{t('cart_total', 'Grand Total')}</span>
                     <span className="font-mono font-black text-2xl text-amber-400">
-                      ${total.toFixed(2)}
+                      €{total.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -549,7 +549,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                     hasEnoughCredit ? (
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-5 h-5" />
-                        <span>Pay with Food Credit • ${total.toFixed(2)}</span>
+                        <span>Pay with Food Credit • €{total.toFixed(2)}</span>
                       </div>
                     ) : (
                       <span>Insufficient Credits</span>
@@ -557,7 +557,7 @@ export default function CheckoutModal({ isOpen, onClose, onOrderSuccess }) {
                   ) : (
                     <div className="flex items-center gap-2">
                       <Lock className="w-4 h-4" />
-                      <span>{t('checkout_place_order_btn', 'Place Order')} • ${total.toFixed(2)}</span>
+                      <span>{t('checkout_place_order_btn', 'Place Order')} • €{total.toFixed(2)}</span>
                     </div>
                   )}
                 </motion.button>
